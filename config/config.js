@@ -81,6 +81,9 @@ var validateDomainIsSet = function (config) {
  * because it requires certs and key files to be available
  */
 var validateSecureMode = function (config) {
+  console.log('---');
+  console.log(config.secure);
+  console.log('---');
 
   if (!config.secure || config.secure.ssl !== true) {
     return true;
