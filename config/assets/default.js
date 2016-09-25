@@ -10,7 +10,7 @@ module.exports = {
         'public/lib/bootstrap/dist/css/bootstrap.css',
         'public/lib/bootstrap/dist/css/bootstrap-theme.css',
         'public/lib/ng-img-crop/compile/minified/ng-img-crop.css',
-        'public/lib/angular-material/angular-material.css'
+        'public/lib/angular-material/angular-material.css',
         // endbower
       ],
       js: [
@@ -25,8 +25,8 @@ module.exports = {
         'public/lib/ng-file-upload/ng-file-upload.js',
         'public/lib/ng-img-crop/compile/minified/ng-img-crop.js',
         'public/lib/owasp-password-strength-test/owasp-password-strength-test.js',
+        'public/lib/angular-aria/angular-aria.js',
         'public/lib/angular-material/angular-material.js',
-        'public/lib/angular-aria/angular-aria.js'
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

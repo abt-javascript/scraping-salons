@@ -6,7 +6,7 @@
   var service = {
     applicationEnvironment: window.env,
     applicationModuleName: applicationModuleName,
-    applicationModuleVendorDependencies: ['ngResource', 'ngAnimate', 'ngMessages', 'ui.router', 'ui.bootstrap', 'ngFileUpload', 'ngImgCrop'],
+    applicationModuleVendorDependencies: ['ngResource', 'ngAnimate', 'ngMessages', 'ui.router', 'ui.bootstrap', 'ngFileUpload', 'ngImgCrop', 'ngMaterial'],
     registerModule: registerModule
   };
 
@@ -730,10 +730,25 @@
     .module('core')
     .controller('HeaderController', HeaderController);
 
-  HeaderController.$inject = ['$scope', '$state', 'Authentication', 'menuService'];
+  HeaderController.$inject = ['$scope', '$state', 'Authentication', 'menuService', '$mdSidenav'];
 
-  function HeaderController($scope, $state, Authentication, menuService) {
+  function HeaderController($scope, $state, Authentication, menuService, $mdSidenav) {
     var vm = this;
+
+    $scope.toggleSidenav = function(menuId) {
+      console.log(menuId);
+      $mdSidenav(menuId).toggle();
+    };
+
+    var list = [];
+    for (var i = 0; i < 100; i++) {
+      list.push({
+        name: 'List Item ' + i,
+        idx: i
+      });
+    }
+
+    $scope.list = list;
 
     vm.accountMenu = menuService.getMenu('account').items[0];
     vm.authentication = Authentication;
