@@ -35,13 +35,42 @@
   {{#each cssFiles}}<link rel="stylesheet" href="{{this}}">{{/each}}
 </head>
 
-<body class="ng-cloak">
-  <header ng-include="'/modules/core/client/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
-  <section class="content">
-    <section class="container">
+<body class="ng-cloak" layout="column" ng-controller="HeaderController as vm">
+  <header layout="row" flex ng-include="'/modules/core/client/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
+  <!--md-content class="content" flex layout="row">
+    <section flex="15" hide-xs></section>
+    <section class="container" flex>
       {{{block "content"}}}
     </section>
-  </section>
+    <section flex='15' hide-xs></section>
+  </md-content-->
+  <div layout="row" flex class="change-my-css">
+  <md-sidenav layout="column" class="main-menu md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+    <div>Side Navigation 2</div>
+{{vm}}
+    <md-list>
+      <md-list-item ng-repeat="item in vm.menu.items | orderBy: 'position'">
+        <div class="md-list-item-text">
+          <div layout="row">
+            <span ng-bind="item.title">{{item.title}}</span>
+          </div>
+        </div>
+      </md-list-item>
+    </md-list>
+  </md-sidenav>
+
+  <md-content layout="column" id="content" flex class="md-padding">
+  Content
+    <p ng-repeat="x in [1,2,3,4,5,6,7,8,9,0]">Test {{x}}</p>
+    <p ng-repeat="x in [1,2,3,4,5,6,7,8,9,0]">Test {{x}}</p>
+    <p ng-repeat="x in [1,2,3,4,5,6,7,8,9,0]">Test {{x}}</p>
+    <p ng-repeat="x in [1,2,3,4,5,6,7,8,9,0]">Test {{x}}</p>
+    <p ng-repeat="x in [1,2,3,4,5,6,7,8,9,0]">Test {{x}}</p>
+    <p ng-repeat="x in [1,2,3,4,5,6,7,8,9,0]">Test {{x}}</p>
+    <p ng-repeat="x in [1,2,3,4,5,6,7,8,9,0]">Test {{x}}</p>
+    <p ng-repeat="x in [1,2,3,4,5,6,7,8,9,0]">Test {{x}}</p>
+  </md-content>
+</div>
 
   <noscript>
     <style>
