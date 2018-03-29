@@ -5,7 +5,8 @@ const authJwt = require('./config/auth-jwt.js');
 const routes = require('./config/routes.js')();
 const cron = require('./config/cron.js');
 const Bcrypt = require('bcrypt');
-const auth = require('basic-auth')
+const auth = require('basic-auth');
+const views = require('./views.js');
 
 //need run after build up
 const after_web_up = function(server) {
@@ -16,14 +17,8 @@ const after_web_up = function(server) {
     });
 
     cron();
-    server.views({
-        engines: {
-            ejs: require('ejs')
-        },
-        relativeTo: __dirname,
-        path: './views'
-    });
-    
+    views(server);
+
     console.log(`Server running at: ${server.info.uri}`)
 }
 

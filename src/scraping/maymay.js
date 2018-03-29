@@ -52,12 +52,12 @@ async function maymay() {
   })
 
   let name = 'maymay';
-
+  let branch = result3.toString().replace(/\s+/g," ");
   let payload = {
     service: result.toString().trim(),
     contact: result2.toString().trim(),
     images: result4.toString().trim(),
-    branch:result3.toString().replace(/\s+/g," "),
+    branch: branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' ),
     name: name,
     baseUrl:'http://salon.maymay.co.id/',
     created: new Date()

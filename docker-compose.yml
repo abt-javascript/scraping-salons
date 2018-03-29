@@ -1,0 +1,24 @@
+version: "2"
+services:
+  mongodb-hapi:
+    image: "mongo:3"
+    ports:
+      - 27017:27017
+    volumes:
+      - /data/db
+    healthcheck:
+      test: mongo
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  web:
+    build: .
+    ports:
+      - "1200:1200"
+    links:
+      - mongodb-hapi
+    depends_on:
+      - mongodb-hapi
+    environment:
+      - DATABASE_URL
+      - SECRET

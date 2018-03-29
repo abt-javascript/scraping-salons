@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/maps": "^0.4.5",
     "auth-static": "^1.0.3",
     "basic-auth": "^2.0.0",
     "bcrypt": "^1.0.3",
