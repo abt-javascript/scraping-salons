@@ -1,6 +1,6 @@
 require('./dotenv.js');
 const Hapi = require('hapi');
-const server = new Hapi.Server();
+const server = new Hapi.Server({port:process.env.PORT || 1200});
 const authJwt = require('./config/auth-jwt.js');
 const routes = require('./config/routes.js')();
 const cron = require('./config/cron.js');
