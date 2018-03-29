@@ -4,6 +4,13 @@ const validation = require('./validation');
 
 module.exports = [{
 	method: 'get',
+	path: '/',
+	handler: controller.home,
+	config: {
+		auth:false
+	}
+}, {
+	method: 'get',
 	path: '/user',
 	handler: controller.list
 }, {

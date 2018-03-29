@@ -6,6 +6,9 @@ const signin = require('../../services/sign-in.js');
 const generateHash = require('../../services/hash.js');
 
 let user = {
+	home: async function(request, h) {
+		return h.view('index');
+	},
 	list: async function(request, h) {
 		const user = await new promise((resolve, reject) => {
 			userModel.find().select("-password").exec((err, users) => {

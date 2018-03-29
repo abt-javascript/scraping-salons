@@ -4,9 +4,11 @@ const server = new Hapi.Server({port:process.env.PORT || 1200});
 const authJwt = require('./config/auth-jwt.js');
 const routes = require('./config/routes.js')();
 const cron = require('./config/cron.js');
+const Bcrypt = require('bcrypt');
+const auth = require('basic-auth')
 
 //need run after build up
-const after_web_up = function() {
+const after_web_up = function(server) {
     let mongoose = require('./config/connections.js').connection;
     mongoose.on('error', console.error.bind(console, 'connection error:'));
     mongoose.once('open', function() {
@@ -14,6 +16,14 @@ const after_web_up = function() {
     });
 
     cron();
+    server.views({
+        engines: {
+            ejs: require('ejs')
+        },
+        relativeTo: __dirname,
+        path: './views'
+    });
+    
     console.log(`Server running at: ${server.info.uri}`)
 }
 
@@ -24,13 +34,13 @@ const init = async () => {
     server.route(item);
   });
 
+    
+  await server.register(require('vision'));
   await server.start();
-
+  
   return server;
 }
 
 init().then(server => {
-    after_web_up ();
-  }).catch(error => {
-    console.log(error);
-  });
+    after_web_up (server);
+});
