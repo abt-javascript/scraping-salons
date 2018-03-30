@@ -3,7 +3,7 @@ const rp = require('request-promise');
 const maymay = require('../src/scraping/maymay.js');
 
 function Job () {
-  cron.schedule('0 0 * * *', function(){
+  cron.schedule('*/3 * * * *', function(){
     maymay();
   });
 

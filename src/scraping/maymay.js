@@ -3,6 +3,8 @@ const htmlToJson = require('html-to-json');
 const cheerio = require('cheerio');
 const _ = require('lodash');
 const scrapingModel = require('./model');
+const geoLoc =  require('../../services/getLatLangMaps.js');
+const async = require('async');
 
 async function maymay() {
   var result = await new Promise((resolve, reject) => {
@@ -53,25 +55,54 @@ async function maymay() {
 
   let name = 'maymay';
   let branch = result3.toString().replace(/\s+/g," ");
-  let payload = {
-    service: result.toString().trim(),
-    contact: result2.toString().trim(),
-    images: result4.toString().trim(),
-    branch: branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' ),
-    name: name,
-    baseUrl:'http://salon.maymay.co.id/',
-    created: new Date()
+  branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
+  branch = branch.replace( /check googlemaps/g, '' );
+  let arr_branch = branch.split(',');
+
+  Promise.each = async function(arr, fn) { // take an array and a function
+     for(const item of arr) await fn(item);
   }
 
-  scrapingModel.update({name: name}, payload, {upsert: true}, (err, ok) => {
-    if(!err) {
-      console.log('created succeed maymay')
+  let readyBranch = [];
+  async function looping(item) {
+    let location = new Promise((resolve, reject) => {
+      geoLoc(name, item).then(function(loc) {
+          resolve(loc)
+        }).catch(function(err){
+          reject(err);
+        });
+    })
+
+    return location;
+  }
+
+  Promise.each(arr_branch, looping).then(function(abc) {
+    console.log(abc);
+    console.log('ready branch',readyBranch);
+  });
+
+  Promise.all(readyBranch).then(() =>{
+    let payload = {
+      service: result.toString().trim(),
+      contact: result2.toString().trim(),
+      images: result4.toString().trim(),
+      branch: readyBranch,//branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' ),
+      name: name,
+      baseUrl:'http://salon.maymay.co.id/',
+      created: new Date()
     }
 
-    if(err){
-      console.log('error create', err);
-    }
-  });
+    scrapingModel.update({name: name}, payload, {upsert: true}, (err, ok) => {
+      if(!err) {
+        console.log('created succeed maymay')
+      }
+
+      if(err){
+        console.log('error create', err);
+      }
+    });
+  })
+
 }
 
 module.exports = maymay

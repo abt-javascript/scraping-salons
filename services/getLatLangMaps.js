@@ -1,17 +1,25 @@
-const maps = function(address) {
-    var googleMapsClient = require('@google/maps').createClient({
-        key: 'AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI'
-    });
-  
+'use strict';
+
+const googleMapsClient = require('@google/maps').createClient({
+    key: 'AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI'
+});
+
+module.exports =  async function (prefix, address) {
+const geoLoc = await new Promise((resolve, reject) => {
     googleMapsClient.geocode({
-        address: address
+        address: prefix +' '+address.substr(0,30)
     }, function(err, response) {
         if (!err) {
-        let geoLoc = response.json.results[0].geometry;
-        console.log(address);
+          let maps = response.json.results[0].geometry;
+          maps.address = address;
+          resolve(maps);
+        }
+
+        if(err){console.log('api error');
+          reject(err);
         }
     });
-}
+  });
 
-module.exports = maps
-  
+  return geoLoc
+}
