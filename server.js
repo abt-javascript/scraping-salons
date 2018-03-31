@@ -6,6 +6,7 @@ const routes = require('./config/routes.js')();
 const cron = require('./config/cron.js');
 const Bcrypt = require('bcrypt');
 const views = require('./views.js');
+const seed = require('./config/seeder');
 
 //need run after build up
 const after_web_up = function(server) {
@@ -13,6 +14,9 @@ const after_web_up = function(server) {
     mongoose.on('error', console.error.bind(console, 'connection error:'));
     mongoose.once('open', function() {
         console.log("mongodb ready !");
+
+        //seeder file
+        seed();
     });
 
     cron();

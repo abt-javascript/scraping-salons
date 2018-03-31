@@ -5,19 +5,16 @@ const mongoose = require("./../../config/connections");
 let Schema = mongoose.Schema;
 
 let schema = new Schema({
-  name: {
+  salon: 'string',
+  address: 'string',
+  location: {
     type:'string',
     unique:true
   },
-  images: 'string',
-  service: 'string',
-  branch: 'string',
-  contact: 'string',
-  baseUrl: 'string',
   created: 'date',
   updated: 'date'
 }, {
-  collection:'Scraping'
+  collection:'Location'
 });
 
-module.exports = mongoose.model('Scraping', schema);
+module.exports = mongoose.model('Location', schema);

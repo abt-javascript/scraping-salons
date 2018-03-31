@@ -9,15 +9,10 @@ let schema = new Schema({
     type:'string',
     unique:true
   },
-  images: 'string',
-  service: 'string',
-  branch: 'string',
-  contact: 'string',
-  baseUrl: 'string',
   created: 'date',
   updated: 'date'
 }, {
-  collection:'Scraping'
+  collection:'Category'
 });
 
-module.exports = mongoose.model('Scraping', schema);
+module.exports = mongoose.model('Category', schema);

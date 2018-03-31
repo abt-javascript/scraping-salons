@@ -10,7 +10,12 @@ let scraping = {
 		const data = await new promise((resolve, reject) => {
 			scrapingModel.find().exec((err, result) => {
 				if(!err){
-					resolve(result);
+					var abb = result[0].branch;
+					var c = abb.split("{");
+					c.map((item) => {
+						console.log(item);
+					});
+					resolve(abb);
 				}
 
 				reject(err);

@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "@google/maps": "^0.4.5",
-    "async": "^2.6.0",
     "bcrypt": "^1.0.3",
     "bluebird": "^3.5.1",
     "cheerio": "^1.0.0-rc.2",

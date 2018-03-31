@@ -1,4 +1,5 @@
 'use strict';
+
 const htmlToJson = require('html-to-json');
 const cheerio = require('cheerio');
 const _ = require('lodash');
@@ -23,7 +24,7 @@ async function maymay() {
     htmlToJson.request('http://salon.maymay.co.id/contact', {
       'contact': ['.sidecontact', function ($div) {
         return this.map('p', ($item) =>{
-          return $item.text();
+          return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
         })
       }]
     }, (err, result) => {
@@ -42,51 +43,74 @@ async function maymay() {
       resolve(result.branch)
     });
   });
+  var result3a = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
+      'address': ['.shop-box', function ($div) {
+        return this.map('figcaption > h3', ($item) =>{
+          return $item.text().trim();
+        })
+      }]
+    }, (err, result) => {
+      resolve(result.address)
+    });
+  });
+
+  result3a = result3a.toString();
 
   var result4 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/', {
-      'images': ['img', function ($img) {
-        return $img.attr('src');
+      'logo': ['.logo', function ($img) {
+        return this.map('figure > a > img', ($item) => {
+          return $item.attr('src');
+        })
       }]
     }, function (err, result) {
-      resolve(result.images);
+      resolve(result.logo);
     });
-  })
+  });
 
-  let name = 'maymay';
+  let name = 'May May'; //must be unique
+
   let branch = result3.toString().replace(/\s+/g," ");
   branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
   branch = branch.replace( /check googlemaps/g, '' );
   let arr_branch = branch.split(',');
-
-  Promise.each = async function(arr, fn) { // take an array and a function
-     for(const item of arr) await fn(item);
-  }
-
+  let arr_branch_address = result3a.split(',');
   let readyBranch = [];
-  async function looping(item) {
-    let location = new Promise((resolve, reject) => {
-      geoLoc(name, item).then(function(loc) {
-          resolve(loc)
-        }).catch(function(err){
-          reject(err);
-        });
-    })
+  let i = 0;
 
-    return location;
+  Promise.each = async function(arr, fn) {
+     for(const item of arr) {
+       const locData = await fn(item, i);
+       //collect address to db
+       readyBranch.push(locData);
+       i++;
+
+     }
   }
 
-  Promise.each(arr_branch, looping).then(function(abc) {
-    console.log(abc);
-    console.log('ready branch',readyBranch);
-  });
+  function looping(item, i) {
+    return new Promise((resolve, reject) => {
+      setTimeout(function() {
+        //get lat and lang from maps by address
+        geoLoc(name, item, arr_branch[i]).then(function(loc) {
+            resolve(loc)
+          }).catch(function(err){
+            reject(err);
+          });
+      }, 1000);
+    });
+  }
 
-  Promise.all(readyBranch).then(() =>{
+
+  Promise.each(arr_branch, looping).then(function() {
+    //readyBranch = readyBranch.toString();
+
     let payload = {
       service: result.toString().trim(),
       contact: result2.toString().trim(),
       images: result4.toString().trim(),
-      branch: readyBranch,//branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' ),
+      branch: readyBranch,
       name: name,
       baseUrl:'http://salon.maymay.co.id/',
       created: new Date()
@@ -101,8 +125,7 @@ async function maymay() {
         console.log('error create', err);
       }
     });
-  })
-
+  });
 }
 
 module.exports = maymay
