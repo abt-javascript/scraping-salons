@@ -3,6 +3,6 @@ const controller = require('./controller');
 
 module.exports = [{
 	method: 'get',
-	path: '/scraping',
+	path: '/salon',
 	handler: controller.list
 }];

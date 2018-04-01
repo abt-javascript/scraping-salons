@@ -5,7 +5,7 @@ const mongoose = require("./../../config/connections");
 let Schema = mongoose.Schema;
 
 let schema = new Schema({
-  salon: 'string',
+  salon:  { type: Schema.Types.ObjectId, ref: 'Salon' },
   address: 'string',
   location: {
     type:'string',

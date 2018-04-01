@@ -11,13 +11,13 @@ let schema = new Schema({
   },
   images: 'string',
   service: 'string',
-  branch: 'string',
+  branch: [{ type: Schema.Types.ObjectId, ref: 'Location' }],
   contact: 'string',
   baseUrl: 'string',
   created: 'date',
   updated: 'date'
 }, {
-  collection:'Scraping'
+  collection:'Salon'
 });
 
-module.exports = mongoose.model('Scraping', schema);
+module.exports = mongoose.model('Salon', schema);

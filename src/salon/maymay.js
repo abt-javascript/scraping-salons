@@ -3,9 +3,10 @@
 const htmlToJson = require('html-to-json');
 const cheerio = require('cheerio');
 const _ = require('lodash');
-const scrapingModel = require('./model');
+const salonModel = require('./model');
 const geoLoc =  require('../../services/getLatLangMaps.js');
 const async = require('async');
+const locationModel = require('../location/model');
 
 async function maymay() {
   var result = await new Promise((resolve, reject) => {
@@ -75,25 +76,25 @@ async function maymay() {
   branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
   branch = branch.replace( /check googlemaps/g, '' );
   let arr_branch = branch.split(',');
-  let arr_branch_address = result3a.split(',');
+  let arr_branch_query = result3a.split(',');
   let readyBranch = [];
   let i = 0;
 
-  Promise.each = async function(arr, fn) {
+  Promise.each = async function(arr, fn, salon_id) {
      for(const item of arr) {
-       const locData = await fn(item, i);
+       const locData = await fn(item, i, salon_id);
+
        //collect address to db
        readyBranch.push(locData);
        i++;
-
      }
   }
 
-  function looping(item, i) {
+  function looping(item, i, salon_id) {
     return new Promise((resolve, reject) => {
       setTimeout(function() {
         //get lat and lang from maps by address
-        geoLoc(name, item, arr_branch[i]).then(function(loc) {
+        geoLoc(name, item, arr_branch[i], salon_id).then(function(loc) {console.log(i);
             resolve(loc)
           }).catch(function(err){
             reject(err);
@@ -102,29 +103,41 @@ async function maymay() {
     });
   }
 
+  let payload = {
+    service: result.toString().trim(),
+    contact: result2.toString().trim(),
+    images: result4.toString().trim(),
+    name: name,
+    branch:[],
+    baseUrl:'http://salon.maymay.co.id/',
+    created: new Date()
+  }
 
-  Promise.each(arr_branch, looping).then(function() {
-    //readyBranch = readyBranch.toString();
+  salonModel.update({name: name}, payload, {upsert: true}, (err, result) => {
+    if(!err) {
+      console.log('created succeed maymay');
 
-    let payload = {
-      service: result.toString().trim(),
-      contact: result2.toString().trim(),
-      images: result4.toString().trim(),
-      branch: readyBranch,
-      name: name,
-      baseUrl:'http://salon.maymay.co.id/',
-      created: new Date()
+      if(result.upserted && result.upserted.length > 0) {
+        let salonId = result.upserted[0]._id;
+
+        Promise.each(arr_branch_query, looping, salonId).then(function() {
+          //create location
+          locationModel.create(readyBranch, (err, location) => {
+            if(!err) {
+              console.log('created location succeed');
+            }
+
+            if(err){
+              console.log('error create', err);
+            }
+          });
+        });
+      }
     }
 
-    scrapingModel.update({name: name}, payload, {upsert: true}, (err, ok) => {
-      if(!err) {
-        console.log('created succeed maymay')
-      }
-
-      if(err){
-        console.log('error create', err);
-      }
-    });
+    if(err){
+      console.log('error create', err);
+    }
   });
 }
 
