@@ -4,9 +4,9 @@ const maymay = require('../src/salon/maymay.js');
 const magdalena = require('../src/salon/magdalena.js');
 
 function Job () {
-  cron.schedule('* * * * *', function(){
-    maymay();
-    //magdalena();
+  cron.schedule('0 0 * * *', function(){
+    //maymay();
+    magdalena();
   });
 
   return cron;
