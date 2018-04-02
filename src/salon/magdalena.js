@@ -6,15 +6,13 @@ const _ = require('lodash');
 const salonModel = require('./model');
 const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
-const categoryFilter = require('../../services/categoryFilter.js')
 
-async function maymay() {
-  categoryFilter();
+async function magdalena() {
   var result = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id', {
-      'service': ['.list-unstyled', function ($div) {
-        return this.map('li', ($item) =>{
-          return $item.find('a').text();
+    htmlToJson.request('http://www.magdalenayoungbridal.com/Service.htm', {
+      'service': ['.lay_598_43', function ($div) {
+        return this.map('div', ($item) =>{
+          return $item.find('div').text();
         })
       }]
     }, (err, result) => {
@@ -22,7 +20,19 @@ async function maymay() {
     });
   });
 
-  result = result.toString().trim();
+  var resultA = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://www.magdalenayoungbridal.com/Service.htm', {
+      'service': ['.facenter', function ($div) {
+        return this.map('span', ($item) =>{
+          return $item.text();
+        })
+      }]
+    }, (err, result) => {
+      resolve(result.service)
+    });
+  });
+
+return console.log(resultA.toString().trim());
 
   var result2 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/contact', {
@@ -107,7 +117,7 @@ async function maymay() {
   }
 
   let payload = {
-    service: result,
+    service: result.toString().trim(),
     contact: result2.toString().trim(),
     images: result4.toString().trim(),
     name: name,
@@ -116,13 +126,12 @@ async function maymay() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+  salonModel.update({name: name}, payload, {upsert: true}, (err, result) => {
     if(!err) {
       console.log('created succeed maymay');
 
-      if(salon.upserted && salon.upserted.length > 0) {
-        console.log('ini service',result)
-        let salonId = salon.upserted[0]._id;
+      if(result.upserted && result.upserted.length > 0) {
+        let salonId = result.upserted[0]._id;
 
         Promise.each(arr_branch_query, looping, salonId).then(function() {
           //create location
@@ -145,4 +154,4 @@ async function maymay() {
   });
 }
 
-module.exports = maymay
+module.exports = magdalena
