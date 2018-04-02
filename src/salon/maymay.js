@@ -5,7 +5,6 @@ const cheerio = require('cheerio');
 const _ = require('lodash');
 const salonModel = require('./model');
 const geoLoc =  require('../../services/getLatLangMaps.js');
-const async = require('async');
 const locationModel = require('../location/model');
 
 async function maymay() {
@@ -94,7 +93,7 @@ async function maymay() {
     return new Promise((resolve, reject) => {
       setTimeout(function() {
         //get lat and lang from maps by address
-        geoLoc(name, item, arr_branch[i], salon_id).then(function(loc) {console.log(i);
+        geoLoc(name, item, arr_branch[i], salon_id).then(function(loc) {
             resolve(loc)
           }).catch(function(err){
             reject(err);
