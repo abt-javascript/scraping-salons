@@ -6,10 +6,8 @@ const _ = require('lodash');
 const salonModel = require('./model');
 const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
-const categoryFilter = require('../../services/categoryFilter.js')
 
 async function maymay() {
-  categoryFilter();
   var result = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id', {
       'service': ['.list-unstyled', function ($div) {

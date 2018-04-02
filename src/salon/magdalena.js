@@ -32,19 +32,19 @@ async function magdalena() {
     });
   });
 
-return console.log(resultA.toString().trim());
+
 
   var result2 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/contact', {
-      'contact': ['.sidecontact', function ($div) {
-        return this.map('p', ($item) =>{
-          return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
-        })
+    htmlToJson.request('http://www.magdalenayoungbridal.com/Page/About-Magdalena-Young-Bridal.html', {
+      'contact': ['.fc28282a', function ($span) {
+        return $span.text();
       }]
     }, (err, result) => {
       resolve(result.contact)
     });
   });
+
+  return console.log(result2);
 
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/our-shop', {
@@ -57,6 +57,7 @@ return console.log(resultA.toString().trim());
       resolve(result.branch)
     });
   });
+  
   var result3a = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/our-shop', {
       'address': ['.shop-box', function ($div) {
