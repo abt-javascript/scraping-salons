@@ -35,6 +35,7 @@ let user = {
 						resolve(ok);
 					}
 
+
 					if(err && err.code === 11000){
 						resolve('duplicate payload');
 					}

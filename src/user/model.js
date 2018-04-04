@@ -12,10 +12,7 @@ let schema = new Schema({
   },
   password: {type:'string'},
   label:'string',
-  mobile: {
-    type:'string',
-    unique:true
-  },
+  mobile: 'string',
   created: 'date',
   updated: 'date'
 }, {
