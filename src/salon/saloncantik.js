@@ -7,7 +7,7 @@ const salonModel = require('./model');
 const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
 
-async function maymay() {
+async function saloncantik() {
   var result = await new Promise((resolve, reject) => {
     htmlToJson.request('http://www.geraisaloncantik.com/paket-perawatan/', {
       'service': ['table', function ($table) {
@@ -26,7 +26,7 @@ async function maymay() {
     htmlToJson.request('http://www.geraisaloncantik.com/kontak/', {
       'contact': ['table', function ($div) {
         return this.map('tr', ($item) =>{
-          return $item.find('span').text().trim().replace(/(\r\n|\n|\r)/gm,"");
+          return $item.find('td > span').text().trim().replace(/(\r\n|\n|\r)/gm,",");
         })
       }]
     }, (err, result) => {
@@ -34,12 +34,10 @@ async function maymay() {
     });
   });
 
-  return console.log(result2);
-
   var result3 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'branch': ['.shop-box', function ($div) {
-        return this.map('figcaption', ($item) =>{
+    htmlToJson.request('http://www.geraisaloncantik.com/cabang/', {
+      'branch': ['table', function ($div) {
+        return this.map('tr > td > h3', ($item) =>{
           return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
         })
       }]
@@ -47,10 +45,12 @@ async function maymay() {
       resolve(result.branch)
     });
   });
+
+
   var result3a = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'address': ['.shop-box', function ($div) {
-        return this.map('figcaption > h3', ($item) =>{
+    htmlToJson.request('http://www.geraisaloncantik.com/cabang/', {
+      'address': ['.table', function ($div) {
+        return this.map('tr > td > p', ($item) =>{
           return $item.text().trim();
         })
       }]
@@ -59,12 +59,12 @@ async function maymay() {
     });
   });
 
-  result3a = result3a.toString();
+  return console.log(result3a);
 
   var result4 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/', {
-      'logo': ['.logo', function ($img) {
-        return this.map('figure > a > img', ($item) => {
+    htmlToJson.request('http://www.geraisaloncantik.com', {
+      'logo': ['.headerinnerwrap', function ($img) {
+        return this.map('a > span > img', ($item) => {
           return $item.attr('src');
         })
       }]
@@ -73,15 +73,16 @@ async function maymay() {
     });
   });
 
-  let name = 'May May'; //must be unique
+  
+  let name = 'Salon Cantik'; //must be unique
 
-  let branch = result3.toString().replace(/\s+/g," ");
-  branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
-  branch = branch.replace( /check googlemaps/g, '' );
-  let arr_branch = branch.split(',');
-  let arr_branch_query = result3a.split(',');
-  let readyBranch = [];
-  let i = 0;
+  // let branch = result3.toString().replace(/\s+/g," ");
+  // branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
+  // branch = branch.replace( /check googlemaps/g, '' );
+  // let arr_branch = branch.split(',');
+  // let arr_branch_query = result3a.split(',');
+  // let readyBranch = [];
+  // let i = 0;
 
   Promise.each = async function(arr, fn, salon_id) {
      for(const item of arr) {
@@ -92,7 +93,7 @@ async function maymay() {
        i++;
      }
   }
-
+  
   function looping(item, i, salon_id) {
     return new Promise((resolve, reject) => {
       setTimeout(function() {
@@ -111,11 +112,11 @@ async function maymay() {
     contact: result2.toString().trim(),
     images: result4.toString().trim(),
     name: name,
-    branch:[],
+    branch:result3,
     baseUrl:'http://salon.maymay.co.id/',
     created: new Date()
   }
-
+  return console.log(payload);
   salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
     if(!err) {
       console.log('created succeed maymay');
@@ -145,4 +146,4 @@ async function maymay() {
   });
 }
 
-module.exports = maymay
+module.exports = saloncantik
