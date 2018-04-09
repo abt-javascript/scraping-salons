@@ -9,7 +9,7 @@ const geoLoc = await new Promise((resolve, reject) => {
         address: query
     }, function(err, response) {
         if (!err) {
-          if (response.json.results.length > 0) {
+          if (response.json.results.length > 0) {console.log('ini query loc berhasil', query);
             let maps = response.json.results[0].geometry;
 
             let payload = {

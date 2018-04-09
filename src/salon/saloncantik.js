@@ -80,16 +80,8 @@ async function saloncantik() {
     });
   });
 
-  
   let name = 'Salon Cantik'; //must be unique
-
-  // let branch = result3.toString().replace(/\s+/g," ");
-  // branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
-  // branch = branch.replace( /check googlemaps/g, '' );
-  // let arr_branch = branch.split(',');
-  // let arr_branch_query = result3a.split(',');
-  // let readyBranch = [];
-  // let i = 0;
+  var readyBranch = [];
 
   Promise.each = async function(arr, fn, salon_id) {
      for(const item of arr) {
@@ -100,12 +92,14 @@ async function saloncantik() {
        i++;
      }
   }
-  
+
+  var i = 0;
   function looping(item, i, salon_id) {
     return new Promise((resolve, reject) => {
       setTimeout(function() {
         //get lat and lang from maps by address
-        geoLoc(name, item, arr_branch[i], salon_id).then(function(loc) {
+        var address = result3c[i].trim().replace(/(\r\n|\n|\r)/gm," ");
+        geoLoc(name, item.substring(0, 25), address, salon_id).then(function(loc) {
             resolve(loc)
           }).catch(function(err){
             reject(err);
@@ -119,20 +113,19 @@ async function saloncantik() {
     contact: result2.toString().trim(),
     images: result4.toString().trim(),
     name: name,
-    branch:result3c.toString().trim().replace(/(\r\n|\n|\r)/gm,","),
+    branch:[],//result3c.toString().trim().replace(/(\r\n|\n|\r)/gm,","),
     baseUrl:'http://salon.maymay.co.id/',
     created: new Date()
   }
-  return console.log(payload);
+
   salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
     if(!err) {
-      console.log('created succeed maymay');
+      console.log('created succeed salon cantik');
 
       if(salon.upserted && salon.upserted.length > 0) {
-        console.log('ini service',result)
         let salonId = salon.upserted[0]._id;
 
-        Promise.each(arr_branch_query, looping, salonId).then(function() {
+        Promise.each(result3b, looping, salonId).then(function() {
           //create location
           locationModel.create(readyBranch, (err, location) => {
             if(!err) {

@@ -16,7 +16,11 @@ async function maymay() {
         })
       }]
     }, (err, result) => {
-      resolve(result.service)
+      if(result){
+        return resolve(result.service)
+      }
+
+      return reject('service maymay null')
     });
   });
 
@@ -107,7 +111,7 @@ async function maymay() {
   let payload = {
     service: result,
     contact: result2.toString().trim(),
-    images: result4.toString().trim(),
+    images: 'http://salon.maymay.co.id'+result4.toString().trim(),
     name: name,
     branch:[],
     baseUrl:'http://salon.maymay.co.id/',

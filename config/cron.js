@@ -6,11 +6,12 @@ const saloncantik = require('../src/salon/saloncantik.js');
 
 function Job () {
   cron.schedule('0 0 * * *', function(){
-    // maymay().then(() => {
-    //   magdalena();
-    // });
-    saloncantik();
-    
+    maymay().then(() => {
+      magdalena().then(() =>{
+        saloncantik();
+      });
+    });
+
   });
 
   return cron;
