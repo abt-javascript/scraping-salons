@@ -5,7 +5,7 @@ const magdalena = require('../src/salon/magdalena.js');
 const saloncantik = require('../src/salon/saloncantik.js');
 
 function Job () {
-  cron.schedule('0 0 * * *', function(){
+  cron.schedule('* * * * *', function(){
     // maymay().then(() => {
     //   magdalena();
     // });

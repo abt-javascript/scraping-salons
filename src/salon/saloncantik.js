@@ -46,11 +46,10 @@ async function saloncantik() {
     });
   });
 
-
   var result3a = await new Promise((resolve, reject) => {
     htmlToJson.request('http://www.geraisaloncantik.com/cabang/', {
-      'address': ['.table', function ($div) {
-        return this.map('tr > td > p', ($item) =>{
+      'address': ['table', function ($div) {
+        return this.map('tr > td > p', ($item) => {
           return $item.text().trim();
         })
       }]
@@ -59,7 +58,15 @@ async function saloncantik() {
     });
   });
 
-  return console.log(result3a);
+ let result3b = _.remove(result3a[0], function(n) {
+    return n !== 'Lihat>';
+  });
+
+  let result3c = [];
+
+  result3[0].map((item, index) => {
+    result3c.push(item +' ('+result3b[index]+')');
+  });
 
   var result4 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://www.geraisaloncantik.com', {
@@ -112,7 +119,7 @@ async function saloncantik() {
     contact: result2.toString().trim(),
     images: result4.toString().trim(),
     name: name,
-    branch:result3,
+    branch:result3c.toString().trim().replace(/(\r\n|\n|\r)/gm,","),
     baseUrl:'http://salon.maymay.co.id/',
     created: new Date()
   }
