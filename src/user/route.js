@@ -33,4 +33,8 @@ module.exports = [{
 			payload: validation.signin
 		}
 	}
+}, {
+	method: 'get',
+	path: '/user/{id}',
+	handler: controller.byId
 }];

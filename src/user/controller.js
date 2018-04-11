@@ -85,6 +85,22 @@ let user = {
 		});
 
 		return h.response(user);
+	},
+	byId: async function(request, h) {
+		const data = await new promise((resolve, reject) => {
+			userModel.findOne({_id:request.params.id},{password:0}).exec((err, result) => {
+				if(!err) {					
+					resolve(result);
+				}
+
+				if(err) {
+					reject(err);
+				}
+
+			});
+		});
+
+		return data;
 	}
 };
 

@@ -45,7 +45,7 @@ let salon = {
 		});
 
 		return data;
-	},
+	}
 };
 
 module.exports = salon;
