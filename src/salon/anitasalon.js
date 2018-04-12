@@ -24,11 +24,47 @@ async function anitasalon() {
     });
   });
 
-  //result = result.toString().trim();
-return console.log(result);
+  var resulta = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://anitasalon-rempoa.com/perawatan.php', {
+      'service': ['#submenu > ul', function ($div) {
+        return this.map('li', ($item) =>{
+          return $item.find('a').text();
+        })
+      }]
+    }, (err, result) => {
+      if(result){
+        return resolve(result.service)
+      }
+
+      return reject('service anitasalon null')
+    });
+  });
+
+  var resultb = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://anitasalon-rempoa.com/tatarias.php', {
+      'service': ['#submenu > ul', function ($div) {
+        return this.map('li', ($item) =>{
+          return $item.find('a').text();
+        })
+      }]
+    }, (err, result) => {
+      if(result){
+        return resolve(result.service)
+      }
+
+      return reject('service anitasalon null')
+    });
+  });
+
+  result = result.toString().trim();
+  resulta = result.toString().trim();
+  resultb = result.toString().trim();
+
+  let resultc = ['Klinik ('+result+')', 'Perawatan ('+resulta+')', 'Tatarias ('+resultb+')'];
+
   var result2 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/contact', {
-      'contact': ['.sidecontact', function ($div) {
+    htmlToJson.request('http://anitasalon-rempoa.com/about.php', {
+      'contact': ['#alamat', function ($div) {
         return this.map('p', ($item) =>{
           return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
         })
@@ -38,6 +74,7 @@ return console.log(result);
     });
   });
 
+  return console.log(result2);
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/our-shop', {
       'branch': ['.shop-box', function ($div) {
@@ -109,7 +146,7 @@ return console.log(result);
   }
 
   let payload = {
-    service: result,
+    service: resultc,
     contact: result2.toString().trim(),
     images: 'http://salon.maymay.co.id'+result4.toString().trim(),
     name: name,
