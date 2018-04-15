@@ -7,8 +7,8 @@ function seederUser() {
     if (!user) {
       generateHash('admin1234').then(hash => {
         let payload = {
-          name: 'admin',
-          username:'admin',
+          name: 'admin2',
+          username:'admin2',
           created: new Date()
         }
 

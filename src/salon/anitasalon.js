@@ -60,7 +60,7 @@ async function anitasalon() {
   resulta = result.toString().trim();
   resultb = result.toString().trim();
 
-  let resultc = ['Klinik ('+result+')', 'Perawatan ('+resulta+')', 'Tatarias ('+resultb+')'];
+  let service = ['Klinik ('+result+')', 'Perawatan ('+resulta+')', 'Tatarias ('+resultb+')'];
 
   var result2 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://anitasalon-rempoa.com/about.php', {
@@ -74,7 +74,11 @@ async function anitasalon() {
     });
   });
 
-  return console.log(result2);
+  result2 = result2.toString().trim().replace(/(\r\n|\n|\r)/gm,"");
+
+  var contact = result2.substring(66, 86)+result2.substring(90, 110);
+  var fax = result2.substring(112, 131);
+
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/our-shop', {
       'branch': ['.shop-box', function ($div) {
@@ -86,41 +90,12 @@ async function anitasalon() {
       resolve(result.branch)
     });
   });
-  var result3a = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'address': ['.shop-box', function ($div) {
-        return this.map('figcaption > h3', ($item) =>{
-          return $item.text().trim();
-        })
-      }]
-    }, (err, result) => {
-      resolve(result.address)
-    });
-  });
 
-  result3a = result3a.toString();
+  var address = result2.substring(0, 18) + result2.substring(19, 39) + result2.substring(39, 63);
 
-  var result4 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/', {
-      'logo': ['.logo', function ($img) {
-        return this.map('figure > a > img', ($item) => {
-          return $item.attr('src');
-        })
-      }]
-    }, function (err, result) {
-      resolve(result.logo);
-    });
-  });
+  var logo = 'http://www.anitasalon-rempoa.com/images/logo.jpg'
 
-  let name = 'May May'; //must be unique
-
-  let branch = result3.toString().replace(/\s+/g," ");
-  branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
-  branch = branch.replace( /check googlemaps/g, '' );
-  let arr_branch = branch.split(',');
-  let arr_branch_query = result3a.split(',');
-  let readyBranch = [];
-  let i = 0;
+  let name = 'Anita Salon'; //must be unique
 
   Promise.each = async function(arr, fn, salon_id) {
      for(const item of arr) {
@@ -136,7 +111,7 @@ async function anitasalon() {
     return new Promise((resolve, reject) => {
       setTimeout(function() {
         //get lat and lang from maps by address
-        geoLoc(name, item, arr_branch[i], salon_id).then(function(loc) {
+        geoLoc(name, 'Jl Rempoa Raya No. 17 Jakarta Selatan', 'Jl Rempoa Raya #17 Jakarta Selatan', salon_id).then(function(loc) {
             resolve(loc)
           }).catch(function(err){
             reject(err);
@@ -146,35 +121,35 @@ async function anitasalon() {
   }
 
   let payload = {
-    service: resultc,
-    contact: result2.toString().trim(),
-    images: 'http://salon.maymay.co.id'+result4.toString().trim(),
+    service: service.toString(),
+    contact: contact,
+    images: logo,
     name: name,
     branch:[],
-    baseUrl:'http://salon.maymay.co.id/',
+    baseUrl:'http://www.anitasalon-rempoa.com/',
     created: new Date()
   }
 
   salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
     if(!err) {
-      console.log('created succeed maymay');
+      console.log('created succeed Anita Salon');
 
       if(salon.upserted && salon.upserted.length > 0) {
-        console.log('ini service',result)
         let salonId = salon.upserted[0]._id;
 
-        Promise.each(arr_branch_query, looping, salonId).then(function() {
-          //create location
-          locationModel.create(readyBranch, (err, location) => {
-            if(!err) {
-              console.log('created location succeed');
-            }
+        geoLoc(name, 'Jl Rempoa Raya No. 17 Jakarta Selatan', 'Jl Rempoa Raya #17 Jakarta Selatan', salonId).then(function(loc) {
+            locationModel.create(loc, (err, location) => {
+              if(!err) {
+                console.log('created location succeed');
+              }
 
-            if(err){
-              console.log('error create', err);
-            }
+              if(err){
+                console.log('error create', err);
+              }
+            });
+          }).catch(function(err){
+            reject(err);
           });
-        });
       }
     }
 

@@ -8,12 +8,13 @@ let schema = new Schema({
   salon:  { type: Schema.Types.ObjectId, ref: 'Salon' },
   address: 'string',
   location: {
-    type:'string'
+    type:'string',
+    unique:true
   },
   created: 'date',
   updated: 'date'
 }, {
-  collection:'Location'
+  collection:'Bookmark'
 });
 
-module.exports = mongoose.model('Location', schema);
+module.exports = mongoose.model('Bookmark', schema);

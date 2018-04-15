@@ -8,12 +8,12 @@ const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
 const imgBuffer =  require('../../services/image_to_buffer.js');
 
-async function maymay() {
+async function moz5() {
   var result = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id', {
-      'service': ['.list-unstyled', function ($div) {
-        return this.map('li', ($item) =>{
-          return $item.find('a').text();
+    htmlToJson.request('http://moz5salonmuslimah.com/index.php/page/service.html', {
+      'service': ['#content_content', function ($div) {
+        return this.map('p', ($item) => {
+          return $item.text();
         })
       }]
     }, (err, result) => {
@@ -21,11 +21,11 @@ async function maymay() {
         return resolve(result.service)
       }
 
-      return reject('service maymay null')
+      return reject('service Moz5 null')
     });
   });
-
-  result = result.toString().trim();
+console.log(result)
+  return result = result.toString().trim();
 
   var result2 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/contact', {
@@ -151,4 +151,4 @@ async function maymay() {
   });
 }
 
-module.exports = maymay
+module.exports = moz5
