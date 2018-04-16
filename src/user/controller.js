@@ -1,5 +1,6 @@
 'use strict';
 const userModel = require('./model');
+const bookmarkModel = require('../bookmark/model.js');
 const promise = require('bluebird');
 const generateToken = require('../../services/token.js');
 const signin = require('../../services/sign-in.js');
@@ -74,9 +75,17 @@ let user = {
 							mobile: ok.mobile,
 						};
 
-						obj['token'] = generateToken(obj);
+						bookmarkModel.find({user:ok._id}).populate('salon').exec((err, bookmark) => {
+							if(!err) {
+								obj['bookmark'] = bookmark;
+								obj['token'] = generateToken(obj);
 
-						resolve(obj);
+								return resolve(obj);
+							}
+
+							reject(err);
+						});
+
 					}).catch(err => {
 						reject(err);
 					});
@@ -89,7 +98,7 @@ let user = {
 	byId: async function(request, h) {
 		const data = await new promise((resolve, reject) => {
 			userModel.findOne({_id:request.params.id},{password:0}).exec((err, result) => {
-				if(!err) {					
+				if(!err) {
 					resolve(result);
 				}
 
