@@ -11,8 +11,8 @@ const imgBuffer =  require('../../services/image_to_buffer.js');
 async function moz5() {
   var result = await new Promise((resolve, reject) => {
     htmlToJson.request('http://moz5salonmuslimah.com/index.php/page/service.html', {
-      'service': ['#content_content', function ($div) {
-        return this.map('p', ($item) => {
+      'service': ['.MsoListParagraphCxSpLast', function ($div) {
+        return this.map('strong', ($item) => {
           return $item.text();
         })
       }]
@@ -24,12 +24,42 @@ async function moz5() {
       return reject('service Moz5 null')
     });
   });
-console.log(result)
-  return result = result.toString().trim();
+
+  var resulta = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://moz5salonmuslimah.com/index.php/page/service.html', {
+      'service': ['.MsoNormal', function ($div) {
+        return this.map('strong', ($item) => {
+          return $item.text();
+        })
+      }]
+    }, (err, result) => {
+      if(result){
+        return resolve(result.service)
+      }
+
+      return reject('service Moz5 null')
+    });
+  });
+  var arr =[]
+  resulta.map((item,index) => {
+    if(item.length > 0) {
+      arr.push(item);
+    }
+
+  });
+
+  result.map((item,index) => {
+    if(item.length > 0) {
+      arr.push(item);
+    }
+  });
+
+  arr.splice(2, 1);
+  var service = arr.toString();
 
   var result2 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/contact', {
-      'contact': ['.sidecontact', function ($div) {
+    htmlToJson.request('http://moz5salonmuslimah.com/index.php/page/contact.html', {
+      'contact': ['#content_content', function ($div) {
         return this.map('p', ($item) =>{
           return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
         })
@@ -39,35 +69,32 @@ console.log(result)
     });
   });
 
+  var contact = result2[0][0];
+  var address = result2[0][2]
+
   var result3 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'branch': ['.shop-box', function ($div) {
-        return this.map('figcaption', ($item) =>{
-          return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
+    htmlToJson.request('http://moz5salonmuslimah.com/index.php/page/view_reg/2.html', {
+      'branch': ['.link_lokasi', function ($div) {
+        return this.map('div > a', ($item) =>{
+          return $item.find('p').text().trim().replace(/(\r\n|\n|\r)/gm,"");
         })
       }]
     }, (err, result) => {
       resolve(result.branch)
     });
   });
-  var result3a = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'address': ['.shop-box', function ($div) {
-        return this.map('figcaption > h3', ($item) =>{
-          return $item.text().trim();
-        })
-      }]
-    }, (err, result) => {
-      resolve(result.address)
-    });
+
+  var branch = [];
+  result3[0].map((item, index) => {
+    if(item !== ''){
+      branch.push(item)
+    }
   });
 
-  result3a = result3a.toString();
-
-  var result4 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/', {
-      'logo': ['.logo', function ($img) {
-        return this.map('figure > a > img', ($item) => {
+  var image = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://moz5salonmuslimah.com/', {
+      'logo': ['#logo', function ($img) {
+        return this.map('img', ($item) => {
           return $item.attr('src');
         })
       }]
@@ -76,13 +103,9 @@ console.log(result)
     });
   });
 
-  let name = 'May May'; //must be unique
+  image = image.toString();
 
-  let branch = result3.toString().replace(/\s+/g," ");
-  branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
-  branch = branch.replace( /check googlemaps/g, '' );
-  let arr_branch = branch.split(',');
-  let arr_branch_query = result3a.split(',');
+  let name = 'Moz5'; //must be unique;
   let readyBranch = [];
   let i = 0;
 
@@ -100,7 +123,7 @@ console.log(result)
     return new Promise((resolve, reject) => {
       setTimeout(function() {
         //get lat and lang from maps by address
-        geoLoc(name, item, arr_branch[i], salon_id).then(function(loc) {
+        geoLoc(name, item.substring(0,25), branch[i], salon_id).then(function(loc) {
             resolve(loc)
           }).catch(function(err){
             reject(err);
@@ -109,46 +132,43 @@ console.log(result)
     });
   }
 
-  var url = 'http://salon.maymay.co.id' + result4.toString().trim();
-  imgBuffer(url).then((img) => {
-    let payload = {
-      service: result,
-      contact: result2.toString().trim(),
-      images: img,
-      name: name,
-      branch:[],
-      baseUrl:'http://salon.maymay.co.id/',
-      created: new Date()
+  let payload = {
+    service: service,
+    contact: contact,
+    images: image,
+    name: name,
+    branch:[],
+    baseUrl:'http://moz5salonmuslimah.com/',
+    created: new Date()
+  }
+
+  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+    if(!err) {
+      console.log('created succeed Moz5');
+
+      if(salon.upserted && salon.upserted.length > 0) {
+        let salonId = salon.upserted[0]._id;
+
+        Promise.each(branch, looping, salonId).then(function() {
+          //create location
+          locationModel.create(readyBranch, (err, location) => {
+            if(!err) {
+              console.log('created location succeed');
+            }
+
+            if(err){
+              console.log('error create', err);
+            }
+          });
+        });
+      }
     }
 
-    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-      if(!err) {
-        console.log('created succeed maymay');
-
-        if(salon.upserted && salon.upserted.length > 0) {
-          console.log('ini service',result)
-          let salonId = salon.upserted[0]._id;
-
-          Promise.each(arr_branch_query, looping, salonId).then(function() {
-            //create location
-            locationModel.create(readyBranch, (err, location) => {
-              if(!err) {
-                console.log('created location succeed');
-              }
-
-              if(err){
-                console.log('error create', err);
-              }
-            });
-          });
-        }
-      }
-
-      if(err){
-        console.log('error create', err);
-      }
-    });
+    if(err){
+      console.log('error create', err);
+    }
   });
+
 }
 
 module.exports = moz5
