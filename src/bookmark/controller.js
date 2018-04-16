@@ -2,18 +2,20 @@
 const bookmarkModel = require('./model');
 
 let bookmark = {
-	list: async function(request, h) {
-		const data = await new Promise((resolve, reject) => {
-			bookmarkModel.find().populate('salon').exec((err, result) => {
-				if(!err) {
-					return resolve(result);
-				}
+	create: async function(request, h) {
+		// var payload = request.payload;
 
-				reject(err);
-			});
-		});
+		// const data = await new Promise((resolve, reject) => {
+		// 	bookmarkModel.find().populate('salon').exec((err, result) => {
+		// 		if(!err) {
+		// 			return resolve(result);
+		// 		}
 
-		return data;
+		// 		reject(err);
+		// 	});
+		// });
+
+		// return data;
 	}
 
 };

@@ -6,19 +6,23 @@ const saloncantik = require('../src/salon/saloncantik.js');
 const anitasalon = require('../src/salon/anitasalon.js');
 const fourlen = require('../src/salon/fourlen.js');
 const moz5 = require('../src/salon/moz5.js');
+const irwansalon = require('../src/salon/irwansalon.js');
 
 function Job () {
-  cron.schedule('0 0 * * *', function() {
-    // maymay().then(() => {
-    //   magdalena().then(() =>{
-    //     saloncantik().then(() =>{
-    //       anitasalon().then(() =>{
-    //         fourlen();
-    //       });
-    //     });
-    //   });
-    // });
-moz5();
+  cron.schedule('*/50 * * * *', function() {
+    maymay().then(() => {
+      magdalena().then(() =>{
+        saloncantik().then(() =>{
+          anitasalon().then(() =>{
+            fourlen().then(() => {
+              moz5().then(() =>{
+                irwansalon();
+              });
+            });
+          });
+        });
+      });
+    });
   });
 
   return cron;

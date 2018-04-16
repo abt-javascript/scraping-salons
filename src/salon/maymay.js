@@ -126,7 +126,6 @@ async function maymay() {
         console.log('created succeed maymay');
 
         if(salon.upserted && salon.upserted.length > 0) {
-          console.log('ini service',result)
           let salonId = salon.upserted[0]._id;
 
           Promise.each(arr_branch_query, looping, salonId).then(function() {
