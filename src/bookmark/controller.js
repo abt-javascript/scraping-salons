@@ -3,19 +3,31 @@ const bookmarkModel = require('./model');
 
 let bookmark = {
 	create: async function(request, h) {
-		// var payload = request.payload;
+		var payload = request.payload;
+		if(!payload.user_id) {
+			return 'Missing user_id'
+		}
 
-		// const data = await new Promise((resolve, reject) => {
-		// 	bookmarkModel.find().populate('salon').exec((err, result) => {
-		// 		if(!err) {
-		// 			return resolve(result);
-		// 		}
+		if(!payload.salon_id) {
+			return 'Missing salon_id'
+		}
 
-		// 		reject(err);
-		// 	});
-		// });
+		var createData = {
+			salon:payload.salon_id,
+			user:payload.user_id
+		}
+		const data = await new Promise((resolve, reject) => {
+			bookmarkModel.update(createData, createData, {upsert: true}, (err, bookmark) => {
+				if(!err) {
+					return resolve(bookmark);
+				}
+console.log(err);
 
-		// return data;
+				reject(err);
+			});
+		});
+
+		return data;
 	}
 
 };

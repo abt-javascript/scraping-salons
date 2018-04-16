@@ -5,12 +5,8 @@ const mongoose = require("./../../config/connections");
 let Schema = mongoose.Schema;
 
 let schema = new Schema({
-  salon:  { type: Schema.Types.ObjectId, ref: 'Salon' },
-  address: 'string',
-  location: {
-    type:'string',
-    unique:true
-  },
+  salon: { type: Schema.Types.ObjectId, ref: 'Salon' },
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
   created: 'date',
   updated: 'date'
 }, {

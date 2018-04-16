@@ -9,7 +9,7 @@ const moz5 = require('../src/salon/moz5.js');
 const irwansalon = require('../src/salon/irwansalon.js');
 
 function Job () {
-  cron.schedule('*/50 * * * *', function() {
+  cron.schedule('0 0 * * *', function() {
     maymay().then(() => {
       magdalena().then(() =>{
         saloncantik().then(() =>{

@@ -2,7 +2,7 @@
 const controller = require('./controller');
 
 module.exports = [{
-	method: 'get',
+	method: 'post',
 	path: '/bookmark',
 	handler: controller.create
 }];
