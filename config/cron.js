@@ -8,7 +8,7 @@ const fourlen = require('../src/salon/fourlen.js');
 const moz5 = require('../src/salon/moz5.js');
 
 function Job () {
-  cron.schedule('*/3 * * * *', function() {
+  cron.schedule('0 0 * * *', function() {
     // maymay().then(() => {
     //   magdalena().then(() =>{
     //     saloncantik().then(() =>{
