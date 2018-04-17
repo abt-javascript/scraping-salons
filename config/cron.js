@@ -8,6 +8,8 @@ const fourlen = require('../src/salon/fourlen.js');
 const moz5 = require('../src/salon/moz5.js');
 const irwansalon = require('../src/salon/irwansalon.js');
 const didosalon = require('../src/salon/didosalon.js');
+const dianmustika = require('../src/salon/dianmustika.js');
+const cgupta = require('../src/salon/cgupta.js');
 
 function Job () {
   cron.schedule('0 0 * * *', function() {
@@ -17,14 +19,19 @@ function Job () {
     //       anitasalon().then(() =>{
     //         fourlen().then(() => {
     //           moz5().then(() =>{
-    //             irwansalon();
+    //             irwansalon().then(() =>{
+    //               didosalon().then(() => {
+    //                 dianmustika();
+    //               });
+    //             });
     //           });
     //         });
     //       });
     //     });
     //   });
     // });
-    didosalon();
+    
+    cgupta();
   });
 
   return cron;

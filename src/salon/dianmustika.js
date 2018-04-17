@@ -8,12 +8,12 @@ const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
 const imgBuffer =  require('../../services/image_to_buffer.js');
 
-async function didosalon() {
+async function dianmustika() {
   var result = await new Promise((resolve, reject) => {
-    htmlToJson.request('https://www.didosalon.com/blog/price-list-dido-salon-kemang', {
-      'service': ['table > tbody', function ($div) {
-        return this.map('tr', ($item) =>{
-          return $item.text().trim().replace(/(\r\n|\n|\r)/gm," ");
+    htmlToJson.request('http://www.dianmustika.com/perawatan-pasca-melahirkan/', {
+      'service': ['ul', function ($div) {
+        return this.map('li', ($item) =>{
+          return $item.find('a').text();
         })
       }]
     }, (err, result) => {
@@ -24,17 +24,11 @@ async function didosalon() {
       return reject('service maymay null')
     });
   });
-
-  var service = [];
-
-  result[0].map((item, index) =>{
-    var abc = item.replace(index+1, "").trim();
-    service.push(abc);
-  });
+  var service = result[3].toString();
 
   var result2 = await new Promise((resolve, reject) => {
-    htmlToJson.request('https://www.didosalon.com/', {
-      'contact': ['.widget-address', function ($div) {
+    htmlToJson.request('http://www.dianmustika.com/promo/', {
+      'contact': ['ol', function ($div) {
         return this.map('li', ($item) =>{
           return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
         })
@@ -44,34 +38,31 @@ async function didosalon() {
     });
   });
 
-  var result2a = [];
-  result2.map((item, index) => {
-    if(item.length > 0) {
-      result2a.push(item)
+  var contact = result2[3];
+ 
+  var result3 = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://www.dianmustika.com/gerai/', {
+      'branch': ['table', function ($div) {
+        return this.map('tr', ($item) =>{
+          return $item.find('td').text().trim().replace(/(\r\n|\n|\r)/gm,"");
+        })
+      }]
+    }, (err, result) => {
+      resolve(result.branch)
+    });
+  });
+  var branch = [];
+
+  result3[0].map((item, index) => {
+    if(index > 0){
+      item = item.replace(index+'.', ''); 
+      item = item.replace('KLIK', '');
+      branch.push(item)
     }
   });
 
-  result2a = result2a[0];
-  var branch = [result2a[0]+' '+result2a[1]+' '+result2a[2]]
-  var contact = result2a[3]+' '+result2a[4];
-  branch.push(result2a[3]+' '+result2a[4]+' '+result2a[5]);
-
-  var image = await new Promise((resolve, reject) => {
-    htmlToJson.request('https://www.didosalon.com/', {
-      'logo': ['.navbar-brand', function ($img) {
-        return this.map('img', ($item) => {
-          return $item.attr('src');
-        })
-      }]
-    }, function (err, result) {
-      resolve(result.logo);
-    });
-  });
-
-  let name = 'Dido Salon'; //must be unique
-  image = image[0][0];
-  image = 'https://www.didosalon.com'+image
-
+  let name = 'Dian Mustika'; //must be unique
+  
   let readyBranch = [];
   let i = 0;
 
@@ -89,7 +80,7 @@ async function didosalon() {
     return new Promise((resolve, reject) => {
       setTimeout(function() {
         //get lat and lang from maps by address
-        geoLoc(name, item.substring(0,15), branch[i], salon_id).then(function(loc) {
+        geoLoc(name, item.substring(0,20), branch[i], salon_id).then(function(loc) {
             resolve(loc)
           }).catch(function(err){
             reject(err);
@@ -98,19 +89,20 @@ async function didosalon() {
     });
   }
 
+
   let payload = {
-    service: service.toString(),
-    contact: contact,
-    images: image,
+    service: service,
+    contact: contact.toString(),
+    images: 'empty',
     name: name,
     branch:[],
-    baseUrl:'https://www.didosalon.com',
+    baseUrl:'http://salon.maymay.co.id/',
     created: new Date()
   }
 
   salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
     if(!err) {
-      console.log('created succeed didosalon');
+      console.log('created succeed Dian Mustika');
 
       if(salon.upserted && salon.upserted.length > 0) {
         let salonId = salon.upserted[0]._id;
@@ -136,4 +128,4 @@ async function didosalon() {
   });
 }
 
-module.exports = didosalon
+module.exports = dianmustika
