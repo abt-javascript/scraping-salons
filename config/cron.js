@@ -22,7 +22,7 @@ function Job () {
     //           moz5().then(() =>{
     //             irwansalon().then(() =>{
     //               didosalon().then(() => {
-    //                 dianmustika().then(() ={
+    //                 dianmustika().then(() =>{
     //                     joanne();
     //                  });
     //               });
@@ -33,8 +33,8 @@ function Job () {
     //     });
     //   });
     // });
-    
-    poetrespa();
+
+    //poetrespa();
   });
 
   return cron;
