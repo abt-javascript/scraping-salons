@@ -8,12 +8,14 @@ const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
 const imgBuffer =  require('../../services/image_to_buffer.js');
 
-async function cgupta() {
+async function poetrespa() {
   var result = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://www.cgupta.com/services/', {
-      'service': ['.sqs-block-content', function ($div) {
-        return this.map('p', ($item) =>{
-          return $item.text();
+    htmlToJson.request('http://poetrespa.com/spamenu/spamenu.php?id=1', {
+      'service': ['.treeview', function ($div) {
+        return this.map('ul', ($item) =>{
+          var abc =  $item.text().trim().replace(/(\t)/gm,"");
+          abc = abc.replace(/(\n)/gm,", ")
+          return abc
         })
       }]
     }, (err, result) => {
@@ -24,22 +26,21 @@ async function cgupta() {
       return reject('service maymay null')
     });
   });
-  console.log(result);
-return
-  result = result.toString().trim();
+  var service = result[0];
 
   var result2 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/contact', {
-      'contact': ['.sidecontact', function ($div) {
-        return this.map('p', ($item) =>{
-          return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
+    htmlToJson.request('http://poetrespa.com/contact.php', {
+      'contact': ['table', function ($div) {
+        return this.map('tr > td', ($item) =>{
+          return $item.text().trim();
         })
       }]
     }, (err, result) => {
       resolve(result.contact)
     });
   });
-
+  console.log(result2);
+  return
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/our-shop', {
       'branch': ['.shop-box', function ($div) {
@@ -151,4 +152,4 @@ return
   });
 }
 
-module.exports = cgupta
+module.exports = poetrespa
