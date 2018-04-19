@@ -23,7 +23,7 @@ async function poetrespa() {
         return resolve(result.service)
       }
 
-      return reject('service maymay null')
+      return reject('service Poetre Spa null')
     });
   });
   var service = result[0];
@@ -32,19 +32,21 @@ async function poetrespa() {
     htmlToJson.request('http://poetrespa.com/contact.php', {
       'contact': ['table', function ($div) {
         return this.map('tr > td', ($item) =>{
-          return $item.text().trim();
+          return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
         })
       }]
     }, (err, result) => {
       resolve(result.contact)
     });
   });
-  console.log(result2);
-  return
+  result2 = result2[0];
+
+  var contact = `${result2[0]} ${result2[2]} ${result2[7]}`;
+  
   var result3 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'branch': ['.shop-box', function ($div) {
-        return this.map('figcaption', ($item) =>{
+    htmlToJson.request('http://poetrespa.com/outlets.php', {
+      'branch': ['#isiContent', function ($div) {
+        return this.map('p', ($item) =>{
           return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
         })
       }]
@@ -52,24 +54,24 @@ async function poetrespa() {
       resolve(result.branch)
     });
   });
-  var result3a = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'address': ['.shop-box', function ($div) {
-        return this.map('figcaption > h3', ($item) =>{
-          return $item.text().trim();
-        })
-      }]
-    }, (err, result) => {
-      resolve(result.address)
-    });
+
+  result3 = result3[0];
+  var result3a = [result3[3]+' '+result3[4]];
+  result3a.push(result3[5]+' '+result3[6])
+  result3a.push(result3[7]+' '+result3[8]);
+  result3a.push(result3[9]+' '+result3[10]);
+  result3a.push(result3[13]+' '+result3[14]);
+  result3a.push(result3[15]+' '+result3[16]);
+
+  var branch = []
+  result3a.map((item) => {
+    branch.push(item.substring(2, item.length).trim())
   });
 
-  result3a = result3a.toString();
-
-  var result4 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/', {
-      'logo': ['.logo', function ($img) {
-        return this.map('figure > a > img', ($item) => {
+  var image = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://poetrespa.com/', {
+      'logo': ['#menu-header', function ($img) {
+        return this.map('a > img', ($item) => {
           return $item.attr('src');
         })
       }]
@@ -78,13 +80,9 @@ async function poetrespa() {
     });
   });
 
-  let name = 'May May'; //must be unique
-
-  let branch = result3.toString().replace(/\s+/g," ");
-  branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
-  branch = branch.replace( /check googlemaps/g, '' );
-  let arr_branch = branch.split(',');
-  let arr_branch_query = result3a.split(',');
+  image = image.toString();
+  image = 'http://poetrespa.com/'+image
+  let name = 'Poetre Spa'; //must be unique
   let readyBranch = [];
   let i = 0;
 
@@ -102,7 +100,7 @@ async function poetrespa() {
     return new Promise((resolve, reject) => {
       setTimeout(function() {
         //get lat and lang from maps by address
-        geoLoc(name, item, arr_branch[i], salon_id).then(function(loc) {
+        geoLoc(name, item.substring(0,25), branch[i], salon_id).then(function(loc) {
             resolve(loc)
           }).catch(function(err){
             reject(err);
@@ -111,44 +109,41 @@ async function poetrespa() {
     });
   }
 
-  var url = 'http://salon.maymay.co.id' + result4.toString().trim();
-  imgBuffer(url).then((img) => {
-    let payload = {
-      service: result,
-      contact: result2.toString().trim(),
-      images: img,
-      name: name,
-      branch:[],
-      baseUrl:'http://salon.maymay.co.id/',
-      created: new Date()
+  let payload = {
+    service: service.toString(),
+    contact: contact,
+    images: image,
+    name: name,
+    branch:[],
+    baseUrl:'http://poetrespa.com/',
+    created: new Date()
+  }
+
+  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+    if(!err) {
+      console.log('created succeed poetre spa');
+
+      if(salon.upserted && salon.upserted.length > 0) {
+        let salonId = salon.upserted[0]._id;
+
+        Promise.each(branch, looping, salonId).then(function() {
+          //create location
+          locationModel.create(readyBranch, (err, location) => {
+            if(!err) {
+              console.log('created location succeed');
+            }
+
+            if(err){
+              console.log('error create', err);
+            }
+          });
+        });
+      }
     }
 
-    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-      if(!err) {
-        console.log('created succeed maymay');
-
-        if(salon.upserted && salon.upserted.length > 0) {
-          let salonId = salon.upserted[0]._id;
-
-          Promise.each(arr_branch_query, looping, salonId).then(function() {
-            //create location
-            locationModel.create(readyBranch, (err, location) => {
-              if(!err) {
-                console.log('created location succeed');
-              }
-
-              if(err){
-                console.log('error create', err);
-              }
-            });
-          });
-        }
-      }
-
-      if(err){
-        console.log('error create', err);
-      }
-    });
+    if(err){
+      console.log('error create', err);
+    }
   });
 }
 

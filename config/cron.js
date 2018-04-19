@@ -14,27 +14,28 @@ const poetrespa = require('../src/salon/poetrespa.js');
 
 function Job () {
   cron.schedule('0 0 * * *', function() {
-    // maymay().then(() => {
-    //   magdalena().then(() =>{
-    //     saloncantik().then(() =>{
-    //       anitasalon().then(() =>{
-    //         fourlen().then(() => {
-    //           moz5().then(() =>{
-    //             irwansalon().then(() =>{
-    //               didosalon().then(() => {
-    //                 dianmustika().then(() =>{
-    //                     joanne();
-    //                  });
-    //               });
-    //             });
-    //           });
-    //         });
-    //       });
-    //     });
-    //   });
-    // });
+  maymay().then(() => {
+    magdalena().then(() =>{
+      saloncantik().then(() =>{
+        anitasalon().then(() =>{
+          fourlen().then(() => {
+            moz5().then(() =>{
+              irwansalon().then(() =>{
+                didosalon().then(() => {
+                  dianmustika().then(() =>{
+                      joanne().then(() =>{
+                     poetrespa();
+                      });
+                   });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 
-    //poetrespa();
   });
 
   return cron;
