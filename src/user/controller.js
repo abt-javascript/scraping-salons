@@ -1,6 +1,7 @@
 'use strict';
 const userModel = require('./model');
 const bookmarkModel = require('../bookmark/model.js');
+const recentModel = require('../recent/model.js');
 const promise = require('bluebird');
 const generateToken = require('../../services/token.js');
 const signin = require('../../services/sign-in.js');
@@ -80,10 +81,17 @@ let user = {
 								obj['bookmark'] = bookmark;
 								obj['token'] = generateToken(obj);
 
-								return resolve(obj);
+								recentModel.find({user:ok._id}).populate('salon').exec((err2, recent) => {
+									if(!err2){
+										obj['recent'] = recent;
+										return resolve(obj);
+									}
+									console.log(err)
+								});
 							}
-
-							reject(err);
+							else {
+								reject(err);
+							}
 						});
 
 					}).catch(err => {

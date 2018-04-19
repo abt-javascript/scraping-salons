@@ -75,6 +75,20 @@ async function maymay() {
       resolve(result.logo);
     });
   });
+  var phone = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://salon.maymay.co.id/contact', {
+      'logo': ['.sidecontact', function ($img) {
+        return this.map('.phone', ($item) => {
+          return $item.text();
+        })
+      }]
+    }, function (err, result) {
+      resolve(result.logo);
+    });
+  });
+  
+  phone = phone.toString();
+  phone = phone.substring(0,14)
 
   let name = 'May May'; //must be unique
 
@@ -116,6 +130,7 @@ async function maymay() {
       contact: result2.toString().trim(),
       images: img,
       name: name,
+      phone: phone,
       branch:[],
       baseUrl:'http://salon.maymay.co.id/',
       created: new Date()

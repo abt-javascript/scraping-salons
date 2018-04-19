@@ -11,31 +11,37 @@ const didosalon = require('../src/salon/didosalon.js');
 const dianmustika = require('../src/salon/dianmustika.js');
 const joanne = require('../src/salon/joanne.js');
 const poetrespa = require('../src/salon/poetrespa.js');
+const naomi = require('../src/salon/naomi.js');
+const cbc = require('../src/salon/cbc.js');
 
 function Job () {
   cron.schedule('0 0 * * *', function() {
-  maymay().then(() => {
-    magdalena().then(() =>{
-      saloncantik().then(() =>{
-        anitasalon().then(() =>{
-          fourlen().then(() => {
-            moz5().then(() =>{
-              irwansalon().then(() =>{
-                didosalon().then(() => {
-                  dianmustika().then(() =>{
-                      joanne().then(() =>{
-                     poetrespa();
-                      });
-                   });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-
+    // maymay().then(() => {
+    //   magdalena().then(() =>{
+    //     saloncantik().then(() =>{
+    //       anitasalon().then(() =>{
+    //         fourlen().then(() => {
+    //           moz5().then(() =>{
+    //             irwansalon().then(() =>{
+    //               didosalon().then(() => {
+    //                 dianmustika().then(() =>{
+    //                   joanne().then(() =>{
+    //                     poetrespa().then(() => {
+    //                       naomi().then(() => {
+    //
+    //                       });
+    //                     });
+    //                   });
+    //                 });
+    //               });
+    //             });
+    //           });
+    //         });
+    //       });
+    //     });
+    //   });
+    // });
+    cbc();
   });
 
   return cron;

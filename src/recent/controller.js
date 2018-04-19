@@ -1,13 +1,14 @@
 'use strict';
-const bookmarkModel = require('./model');
+const recentModel = require('./model');
 
-let bookmark = {
+let recent = {
 	create: async function(request, h) {
 		var payload = request.payload;
+
 		if(!payload) {
 			return 'user_id and salon_id required'
 		}
-		
+
 		if(!payload.user_id) {
 			return 'Missing user_id'
 		}
@@ -22,7 +23,7 @@ let bookmark = {
 		}
 
 		const data = await new Promise((resolve, reject) => {
-			bookmarkModel.update(createData, createData, {upsert: true}, (err, bookmark) => {
+			recentModel.update(createData, createData, {upsert: true}, (err, bookmark) => {
 				if(!err) {
 					return resolve(bookmark);
 				}
@@ -36,4 +37,4 @@ let bookmark = {
 
 };
 
-module.exports = bookmark;
+module.exports = recent;
