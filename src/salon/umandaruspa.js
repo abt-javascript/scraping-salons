@@ -8,71 +8,78 @@ const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
 const imgBuffer =  require('../../services/image_to_buffer.js');
 
-async function tokyobelle() {
+async function umandaruspa() {
   var result = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://www.tokyo-belle.com/id/service', {
-      'service': ['.mb3', function ($div) {
-        return this.map('.w-third-l', ($item) =>{
-          return $item.find('h3').text();
-        })
-      }]
-    }, (err, result) => {
-      if(result){
-        return resolve(result.service)
-      }
-
-      return reject('service maymay null')
-    });
-  });
-
-  var service = result[0].toString();
-
-  var result2 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://www.tokyo-belle.com/id/reservation', {
-      'contact': ['.ph3', function ($div) {
-        return this.map('div', ($item) =>{
-          return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
+    htmlToJson.request('http://umandaruspa.com/', {
+      'contact': ['#ppu8905', function ($div) {
+        return this.map('div > img', ($item) =>{
+          return $item.attr('alt');
         })
       }]
     }, (err, result) => {
       resolve(result.contact)
     });
   });
+  result = result[0];
+  var service = [`${result[0]} (${result[1]})`];
+  service.push(`${result[2]} (${result[3]})`);
+  service.push(`${result[4]} (${result[5]})`);
+  service.push(`${result[6]} (${result[7]})`);
+  service.push(`${result[8]} (${result[9]})`);
+  
+  var result2 = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://umandaruspa.com/', {
+      'contact': ['#u13914-8', function ($img) {
+        return $img.attr('alt');
+      }]
+    }, (err, result) => {
+      resolve(result.contact)
+    });
+  });
 
-  //result2 = result2[0];
-  var contact = `${result2[2][2]} ${result2[2][4]} ${result2[2][6]}`;
-  var phone = result2[2][6].substring(0, 13)
+  var result2a = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://umandaruspa.com/', {
+      'contact': ['#u14957-4', function ($img) {
+        return $img.attr('alt');
+      }]
+    }, (err, result) => {
+      resolve(result.contact)
+    });
+  });
+
+  var phone = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://umandaruspa.com/', {
+      'contact': ['#u14927-4', function ($img) {
+        return $img.attr('alt');
+      }]
+    }, (err, result) => {
+      resolve(result.contact)
+    });
+  });
+  var contact = `${result2} ${result2a}`;
+  phone = phone.toString();
+
+  var latLng = {lat:-6.271208,lng:106.73887}
   var branch = [contact];
-  branch.push(`${result2[2][15]} ${result2[2][17]} ${result2[2][19]}`);
-  branch.push(`${result2[2][27]} ${result2[2][29]} ${result2[2][31]}`);
-  branch.push(`${result2[2][38]} ${result2[2][40]}`);
-  branch.push(`${result2[2][47]} ${result2[2][49]}`);
-  branch.push(`${result2[2][55]} ${result2[2][57]} ${result2[2][59]}`);
-  branch.push(`${result2[2][55]} ${result2[2][57]}`);
-  branch.push(`${result2[2][67]} ${result2[2][69]}`);
-  branch.push(`${result2[2][77]} ${result2[2][79]}`);
 
   var image = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://www.tokyo-belle.com/id', {
-      'logo': ['.dim', function ($img) {
-        return this.map('a > img', ($item) => {
-          return $item.attr('src');
-        })
+    htmlToJson.request('http://umandaruspa.com/', {
+      'logo': ['#u13885_img', function ($img) {
+        return $img.attr('src');
       }]
     }, function (err, result) {
       resolve(result.logo);
     });
   });
-  image = image[0][0]
-
-  let name = 'Tokyo Belle'; //must be unique
+ 
+  let name = 'Umandaru Spa'; //must be unique
   let readyBranch = [];
   let i = 0;
 
   Promise.each = async function(arr, fn, salon_id) {
      for(const item of arr) {
        const locData = await fn(item, i, salon_id);
-
+       locData.location = JSON.stringify(latLng);
        //collect address to db
        readyBranch.push(locData);
        i++;
@@ -83,7 +90,7 @@ async function tokyobelle() {
     return new Promise((resolve, reject) => {
       setTimeout(function() {
         //get lat and lang from maps by address
-        geoLoc(name, item.substring(0,20), branch[i], salon_id).then(function(loc) {
+        geoLoc(name, item, branch[i], salon_id).then(function(loc) {
             resolve(loc)
           }).catch(function(err){
             reject(err);
@@ -93,19 +100,19 @@ async function tokyobelle() {
   }
 
   let payload = {
-    service: service,
+    service: service.toString(),
     contact: contact,
-    images: image,
+    images: 'http://umandaruspa.com/images/logo%20umandaru.png',
     name: name,
     phone: phone,
     branch:[],
-    baseUrl:'http://www.tokyo-belle.com/',
+    baseUrl:'http://umandaruspa.com/',
     created: new Date()
   }
 
   salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
     if(!err) {
-      console.log('created succeed Tokyo Belle');
+      console.log('created succeed umandaru spa');
 
       if(salon.upserted && salon.upserted.length > 0) {
         let salonId = salon.upserted[0]._id;
@@ -131,4 +138,4 @@ async function tokyobelle() {
   });
 }
 
-module.exports = tokyobelle
+module.exports = umandaruspa

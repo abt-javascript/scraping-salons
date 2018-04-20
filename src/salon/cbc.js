@@ -21,7 +21,7 @@ async function cbc() {
         return resolve(result.service)
       }
 
-      return reject('service maymay null')
+      return reject('service cbc null')
     });
   });
 

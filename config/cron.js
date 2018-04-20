@@ -15,9 +15,10 @@ const naomi = require('../src/salon/naomi.js');
 const cbc = require('../src/salon/cbc.js');
 const royalgarden = require('../src/salon/royalgarden.js');
 const tokyobelle = require('../src/salon/tokyobelle.js');
+const umandaruspa = require('../src/salon/umandaruspa.js');
 
 function Job () {
-  cron.schedule('0 0 * * *', function() {
+  cron.schedule('*/5 * * * *', function() {
     // maymay().then(() => {
     //   magdalena().then(() =>{
     //     saloncantik().then(() =>{
@@ -46,6 +47,7 @@ function Job () {
     //cbc();
     //royalgarden();
     //tokyobelle();
+    umandaruspa();
   });
 
   return cron;
