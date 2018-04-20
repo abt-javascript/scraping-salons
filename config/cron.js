@@ -13,6 +13,8 @@ const joanne = require('../src/salon/joanne.js');
 const poetrespa = require('../src/salon/poetrespa.js');
 const naomi = require('../src/salon/naomi.js');
 const cbc = require('../src/salon/cbc.js');
+const royalgarden = require('../src/salon/royalgarden.js');
+const tokyobelle = require('../src/salon/tokyobelle.js');
 
 function Job () {
   cron.schedule('0 0 * * *', function() {
@@ -41,7 +43,9 @@ function Job () {
     //     });
     //   });
     // });
-    cbc();
+    //cbc();
+    //royalgarden();
+    //tokyobelle();
   });
 
   return cron;

@@ -21,6 +21,18 @@ let bookmark = {
 			user:payload.user_id
 		}
 
+		const check = await new Promise((resolve, reject) => {
+			bookmarkModel.findOneAndRemove(createData, {rawResult:true}, (err, result) => {
+				if(!err) {
+					return resolve(result);
+				}
+			});
+		});
+
+		if(check.value){
+			return check;
+		}
+
 		const data = await new Promise((resolve, reject) => {
 			bookmarkModel.update(createData, createData, {upsert: true}, (err, bookmark) => {
 				if(!err) {
