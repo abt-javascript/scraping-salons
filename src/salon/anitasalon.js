@@ -130,33 +130,43 @@ async function anitasalon() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-    if(!err) {
-      console.log('created succeed Anita Salon');
+  var finish = new Promise((resolve, reject) => {
+    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+      if(!err) {
+        console.log('created succeed Anita Salon');
 
-      if(salon.upserted && salon.upserted.length > 0) {
-        let salonId = salon.upserted[0]._id;
+        if(salon.upserted && salon.upserted.length > 0) {
+          let salonId = salon.upserted[0]._id;
 
-        geoLoc(name, 'Jl Rempoa Raya No. 17 Jakarta Selatan', 'Jl Rempoa Raya #17 Jakarta Selatan', salonId).then(function(loc) {
-            locationModel.create(loc, (err, location) => {
-              if(!err) {
-                console.log('created location succeed');
-              }
+          geoLoc(name, 'Jl Rempoa Raya No. 17 Jakarta Selatan', 'Jl Rempoa Raya #17 Jakarta Selatan', salonId).then(function(loc) {
+              locationModel.create(loc, (err, location) => {
+                if(!err) {
+                  console.log('created location Anita Salon succeed');
+                  return resolve()
+                }
 
-              if(err){
-                console.log('error create', err);
-              }
+                if(err){
+                  console.log('error create', err);
+                  return reject();
+                }
+              });
+            }).catch(function(err){
+              reject(err);
             });
-          }).catch(function(err){
-            reject(err);
-          });
+        }
+        else{
+          resolve('no update data');
+        }
       }
-    }
 
-    if(err){
-      console.log('error create', err);
-    }
+      if(err){
+        console.log('error create', err);
+      }
+    });
   });
+
+  return finish;
+
 }
 
 module.exports = anitasalon

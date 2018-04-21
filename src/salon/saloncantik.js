@@ -118,32 +118,41 @@ async function saloncantik() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-    if(!err) {
-      console.log('created succeed salon cantik');
+  var finish = await new Promise(function(resolve, reject) {
+    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+      if(!err) {
+        console.log('created succeed salon cantik');
 
-      if(salon.upserted && salon.upserted.length > 0) {
-        let salonId = salon.upserted[0]._id;
+        if(salon.upserted && salon.upserted.length > 0) {
+          let salonId = salon.upserted[0]._id;
 
-        Promise.each(result3b, looping, salonId).then(function() {
-          //create location
-          locationModel.create(readyBranch, (err, location) => {
-            if(!err) {
-              console.log('created location succeed');
-            }
+          Promise.each(result3b, looping, salonId).then(function() {
+            //create location
+            locationModel.create(readyBranch, (err, location) => {
+              if(!err) {
+                console.log('created location Salon Cantik succeed');
+                return resolve();
+              }
 
-            if(err){
-              console.log('error create', err);
-            }
+              if(err){
+                console.log('error create', err);
+                reject();
+              }
+            });
           });
-        });
+        }
+        else{
+          resolve('no update data');
+        }
       }
-    }
 
-    if(err){
-      console.log('error create', err);
-    }
+      if(err){
+        console.log('error create', err);
+      }
+    });
   });
+
+  return finish;
 }
 
 module.exports = saloncantik

@@ -30,7 +30,7 @@ async function joanne() {
     if(index > 0) {
       service.push(item);
     }
-    
+
   });
   var resulta = await new Promise((resolve, reject) => {
     htmlToJson.request('http://joannestudio.co.id/ipl-hair-removal/', {
@@ -50,11 +50,10 @@ async function joanne() {
   var bcl = resulta[2][0].replace(/(\n)/gm,", ");
   service = service.concat(bcl);
 
-
   var result2 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://joannestudio.co.id/about-us/', {
       'contact': ['.w-contacts-item-value', function ($div) {
-        
+
         return $div.text();
       }]
     }, (err, result) => {
@@ -63,7 +62,7 @@ async function joanne() {
   });
 
   var contact = result2.toString();
-  
+
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://joannestudio.co.id/about-us/', {
       'branch': ['.wpb_wrapper', function ($div) {
@@ -75,7 +74,7 @@ async function joanne() {
       resolve(result.branch)
     });
   });
-  
+
   var address = [];
   var branch = []
   result3[1].map((item, index) => {
@@ -89,9 +88,9 @@ async function joanne() {
       else{
         branch.push(arr[1]+' '+arr[2])
       }
-      
+
     }
-  }); 
+  });
 
   var image = await new Promise((resolve, reject) => {
     htmlToJson.request('http://joannestudio.co.id/', {
@@ -144,32 +143,41 @@ async function joanne() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-    if(!err) {
-      console.log('created succeed maymay');
+  var finish = await new Promise((resolve, reject) => {
+    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+      if(!err) {
+        console.log('created succeed maymay');
 
-      if(salon.upserted && salon.upserted.length > 0) {
-        let salonId = salon.upserted[0]._id;
+        if(salon.upserted && salon.upserted.length > 0) {
+          let salonId = salon.upserted[0]._id;
 
-        Promise.each(branch, looping, salonId).then(function() {
-          //create location
-          locationModel.create(readyBranch, (err, location) => {
-            if(!err) {
-              console.log('created location succeed');
-            }
+          Promise.each(branch, looping, salonId).then(function() {
+            //create location
+            locationModel.create(readyBranch, (err, location) => {
+              if(!err) {
+                console.log('created location Joanne succeed');
+                return resolve();
+              }
 
-            if(err){
-              console.log('error create', err);
-            }
+              if(err){
+                console.log('error create', err);
+                reject();
+              }
+            });
           });
-        });
+        }
+        else{
+          resolve('no update data');
+        }
       }
-    }
 
-    if(err){
-      console.log('error create', err);
-    }
+      if(err){
+        console.log('error create', err);
+      }
+    });
   });
+  return finish;
+
 }
 
 module.exports = joanne

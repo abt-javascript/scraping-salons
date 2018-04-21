@@ -83,47 +83,52 @@ async function magdalena() {
 
   let name = 'Magadalena'; //must be unique
 
-  imgBuffer(result4.toString().trim()).then((img) => {
-    return PromiseEach(resultB, loopingB).then((item) => {
-      let payload = {
-        service: service.toString().trim(),
-        contact: result2.toString().trim(),
-        images:img,
-        name: name,
-        branch:[],
-        baseUrl:'http://www.magdalenayoungbridal.com/',
-        created: new Date()
+  let payload = {
+    service: service.toString().trim(),
+    contact: result2.toString().trim(),
+    images:result4.toString().trim(),
+    name: name,
+    branch:[],
+    baseUrl:'http://www.magdalenayoungbridal.com/',
+    created: new Date()
+  }
+
+  var finish = await new Promise((resolve, reject) => {
+    salonModel.update({name: name}, payload, {upsert: true}, (err, result) => {
+      if(!err) {
+        console.log('created succeed magdalena');
+
+        if(result.upserted && result.upserted.length > 0) {
+          let salonId = result.upserted[0]._id;
+
+            geoLoc(name, 'Alam Sutera - Serpong', result2.toString().trim(), salonId).then(function(loc) {
+              console.log('ini loc',loc)
+              //create location
+              locationModel.create(loc, (err, location) => {
+                if(!err) {
+                  console.log('created location  magdalena succeed');
+                  return resolve();
+                }
+
+                if(err){
+                  console.log('error create', err);
+                  reject();
+                }
+              });
+            });
+        }
+        else{
+          resolve('no update data');
+        }
       }
 
-      salonModel.update({name: name}, payload, {upsert: true}, (err, result) => {
-        if(!err) {
-          console.log('created succeed magdalena');
-
-          if(result.upserted && result.upserted.length > 0) {
-            let salonId = result.upserted[0]._id;
-
-              geoLoc(name, 'Alam Sutera - Serpong', result2.toString().trim(), salonId).then(function(loc) {
-                console.log('ini loc',loc)
-                //create location
-                locationModel.create(loc, (err, location) => {
-                  if(!err) {
-                    console.log('created location succeed');
-                  }
-
-                  if(err){
-                    console.log('error create', err);
-                  }
-                });
-              });
-          }
-        }
-
-        if(err){
-          console.log('error create', err);
-        }
-      });
+      if(err){
+        console.log('error create', err);
+      }
     });
   });
+
+  return finish;
 }
 
 module.exports = magdalena

@@ -50,6 +50,7 @@ async function maymay() {
       resolve(result.branch)
     });
   });
+
   var result3a = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/our-shop', {
       'address': ['.shop-box', function ($div) {
@@ -75,6 +76,7 @@ async function maymay() {
       resolve(result.logo);
     });
   });
+
   var phone = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/contact', {
       'logo': ['.sidecontact', function ($img) {
@@ -86,7 +88,7 @@ async function maymay() {
       resolve(result.logo);
     });
   });
-  
+
   phone = phone.toString();
   phone = phone.substring(0,14)
 
@@ -124,18 +126,19 @@ async function maymay() {
   }
 
   var url = 'http://salon.maymay.co.id' + result4.toString().trim();
-  imgBuffer(url).then((img) => {
-    let payload = {
-      service: result,
-      contact: result2.toString().trim(),
-      images: img,
-      name: name,
-      phone: phone,
-      branch:[],
-      baseUrl:'http://salon.maymay.co.id/',
-      created: new Date()
-    }
 
+  let payload = {
+    service: result,
+    contact: result2.toString().trim(),
+    images: url,
+    name: name,
+    phone: phone,
+    branch:[],
+    baseUrl:'http://salon.maymay.co.id/',
+    created: new Date()
+  }
+
+  var finish = await new Promise((resolve, reject) => {
     salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
       if(!err) {
         console.log('created succeed maymay');
@@ -147,14 +150,19 @@ async function maymay() {
             //create location
             locationModel.create(readyBranch, (err, location) => {
               if(!err) {
-                console.log('created location succeed');
+                console.log('created location May may succeed');
+                return resolve();
               }
 
               if(err){
+                reject()
                 console.log('error create', err);
               }
             });
           });
+        }
+        else{
+          resolve('no update data')
         }
       }
 
@@ -163,6 +171,8 @@ async function maymay() {
       }
     });
   });
+console.log('selesai');
+  return finish
 }
 
 module.exports = maymay

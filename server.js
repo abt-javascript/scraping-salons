@@ -14,8 +14,6 @@ const after_web_up = function(server) {
     mongoose.on('error', console.error.bind(console, 'connection error:'));
     mongoose.once('open', function() {
         console.log("mongodb ready !");
-        //seeder file
-        seed();
     });
 
     cron();

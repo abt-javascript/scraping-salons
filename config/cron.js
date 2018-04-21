@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-
+const seed = require('./seeder.js');
 const maymay = require('../src/salon/maymay.js');
 const magdalena = require('../src/salon/magdalena.js');
 const saloncantik = require('../src/salon/saloncantik.js');
@@ -16,38 +16,53 @@ const cbc = require('../src/salon/cbc.js');
 const royalgarden = require('../src/salon/royalgarden.js');
 const tokyobelle = require('../src/salon/tokyobelle.js');
 const umandaruspa = require('../src/salon/umandaruspa.js');
+const natashaskin = require('../src/salon/natashaskin.js');
+const estherhouse = require('../src/salon/estherhouse.js');
 
 function Job () {
-  cron.schedule('*/5 * * * *', function() {
-    // maymay().then(() => {
-    //   magdalena().then(() =>{
-    //     saloncantik().then(() =>{
-    //       anitasalon().then(() =>{
-    //         fourlen().then(() => {
-    //           moz5().then(() =>{
-    //             irwansalon().then(() =>{
-    //               didosalon().then(() => {
-    //                 dianmustika().then(() =>{
-    //                   joanne().then(() =>{
-    //                     poetrespa().then(() => {
-    //                       naomi().then(() => {
-    //
-    //                       });
-    //                     });
-    //                   });
-    //                 });
-    //               });
-    //             });
-    //           });
-    //         });
-    //       });
-    //     });
-    //   });
-    // });
-    //cbc();
-    //royalgarden();
-    //tokyobelle();
-    umandaruspa();
+  cron.schedule('*/60 * * * *', function() {
+    return umandaruspa();
+    maymay().then(() => {
+      magdalena().then(() =>{
+        saloncantik().then(() =>{
+          anitasalon().then(() =>{
+            fourlen().then(() => {
+              moz5().then(() =>{
+                irwansalon().then(() =>{
+                  didosalon().then(() => {
+                    dianmustika().then(() =>{
+                      joanne().then(() =>{
+                        poetrespa().then(() => {
+                          naomi().then(() => {
+                            cbc().then(() => {
+                              royalgarden().then(() => {
+                                tokyobelle().then(() => {
+                                  umandaruspa().then(() => {
+                                    natashaskin().then(() => {
+                                      estherhouse().then(() => {
+                                        console.log("scraping done");
+                                        //seeder file
+                                        seed().then(() => {
+                                          console.log('all seeder done');
+                                        });
+                                      });
+                                    });
+                                  });
+                                });
+                              });
+                            });
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
   });
 
   return cron;

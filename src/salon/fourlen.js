@@ -43,12 +43,6 @@ async function fourlen() {
   var tlp = '(021) '+cabang[0].substring(66, 76);
   let name = 'Fourlen'; //must be unique
 
-
-  // let branch = result3.toString().replace(/\s+/g," ");
-  // branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
-  // branch = branch.replace( /check googlemaps/g, '' );
-  // let arr_branch = branch.split(',');
-  // let arr_branch_query = result3a.split(',');
   let readyBranch = [];
 
   let i = 0;
@@ -86,33 +80,43 @@ async function fourlen() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-      if(!err) {
-        console.log('created succeed Fourlen');
+  var finish = await new Promise((resolve, reject) => {
+    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+        if(!err) {
+          console.log('created succeed Fourlen');
 
-        if(salon.upserted && salon.upserted.length > 0) {
+          if(salon.upserted && salon.upserted.length > 0) {
 
-          let salonId = salon.upserted[0]._id;
+            let salonId = salon.upserted[0]._id;
 
-          Promise.each(cabang, looping, salonId).then(function() {
-            //create location
-            locationModel.create(readyBranch, (err, location) => {
-              if(!err) {
-                console.log('created location succeed');
-              }
+            Promise.each(cabang, looping, salonId).then(function() {
+              //create location
+              locationModel.create(readyBranch, (err, location) => {
+                if(!err) {
+                  console.log('created location Fourlen succeed');
+                  return resolve();
+                }
 
-              if(err){
-                console.log('error create', err);
-              }
+                if(err){
+                  console.log('error create', err);
+                  reject();
+                }
+              });
             });
-          });
+          }
+          else{
+            resolve('no update data');
+          }
         }
-      }
 
-      if(err){
-        console.log('error create', err);
-      }
-    });
+        if(err){
+          console.log('error create', err);
+        }
+      });
+
+  });
+
+  return finish;
 
 }
 

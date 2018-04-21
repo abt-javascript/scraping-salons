@@ -47,8 +47,9 @@ let salon = {
 
 			});
 		});
+
 		var arr  = [];
-		var komar = async function(array, fn) {
+	 	Promise.each = async function(array, fn) {
 			for(const item of array) {
 				var data = await fn(item);
 
@@ -65,9 +66,13 @@ let salon = {
 					var url =`origins=${lat},${long}&destinations=${location.lat},${location.lng}`
 
 					axios.get(`http://maps.googleapis.com/maps/api/distancematrix/json?${url}`).then((response) => {
+						if(response.data.error_message){
+							return reject2(response.data.error_message);
+						}
+
 						if(response.data.rows[0].elements[0].distance) {
 							var distance = response.data.rows[0].elements[0].distance;
-							resolve2({text:distance.text, value:distance.value, address:item.address, salon:item.salon})
+							resolve2({text:distance.text, value:distance.value, address:item.address, salon:item.salon, salon_id:(item.salon) ? item.salon._id : item.salon})
 						}
 						else{
 							resolve2(false)
@@ -85,12 +90,24 @@ let salon = {
 		}
 
 		var data2 = await new Promise((resolve3, reject3) =>{
-			komar(data, looping).then(() => {
+			Promise.each(data, looping).then(() => {
 				resolve3(arr);
 			})
 		})
 		var data2 = _.sortBy(data2, 'value' );
-		return data2;
+		var data3 = _.values(_.groupBy(data2, 'salon_id'));
+
+		data3.map((item) => {
+			if(item[0].salon && item[0].salon_id){
+				console.log(item[0].salon_id, item[0].salon.name);
+			}
+			else {
+				console.log('ini yg undef',item[0]);
+			}
+
+		});
+
+		return data3;
 	}
 
 };

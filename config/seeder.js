@@ -5,12 +5,18 @@ const path = require("path");
 const promise = require("bluebird");
 const _ = require("lodash");
 
-const seed = function () {
+const seed = async function () {
   let routes = [];
 
-  glob.sync('./seed/**.js', {ignore:'index.js',dot:true}).forEach((file) => {
-    const run = require(path.resolve(file));
+  var data = await new Promise((resolve, reject) => {
+    glob.sync('./seed/**.js', {ignore:'index.js',dot:true}).forEach((file) => {
+      const run = require(path.resolve(file));
+      resolve(run)
+    });
   });
+
+  return data
+
 }
 
 module.exports = seed

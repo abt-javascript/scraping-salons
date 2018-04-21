@@ -73,7 +73,7 @@ async function irwansalon() {
       if(result){
         resolve(result.branch)
       }
-      
+
     });
   });
 
@@ -118,7 +118,7 @@ async function irwansalon() {
   });
 
   var bekasi = result3c[0]+result3c1.toString().substring(0,33);
- 
+
   branch.push(bekasi);
 
   var result3d = await new Promise((resolve, reject) => {
@@ -153,7 +153,7 @@ async function irwansalon() {
       if(result){
         resolve(result.branch);
       }
-      
+
     });
   });
 
@@ -166,7 +166,7 @@ async function irwansalon() {
       if(result){
         resolve(result.branch)
       }
-      
+
     });
   });
 
@@ -182,7 +182,7 @@ async function irwansalon() {
       if(result){
         resolve(result.branch);
       }
-      
+
     });
   });
 
@@ -199,7 +199,7 @@ async function irwansalon() {
   });
   result3f1 = result3f1.toString();
   var gi = result3f[0] +' '+result3f1.substring(0,35);
-  
+
   branch.push(gi);
 
   var result3g = await new Promise((resolve, reject) => {
@@ -211,11 +211,10 @@ async function irwansalon() {
       if(result){
         resolve(result.branch);
       }
-      
+
     });
   });
 
- 
   var result3g1 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://irwanteam.com/branch/show/7/pondok-indah-mall', {
       'branch': ['.text-desc', function ($div) {
@@ -225,13 +224,13 @@ async function irwansalon() {
       if(result) {
         resolve(result.branch);
       }
-      
+
     });
   });
 
   result3g1 = result3g1.toString();
   var pim  = result3g[0]+' '+result3g1.substring(0,30);
- 
+
   branch.push(pim);
 
   var result3h = await new Promise((resolve, reject) => {
@@ -243,7 +242,7 @@ async function irwansalon() {
       if(result){
         resolve(result.branch);
       }
-      
+
     });
   });
 
@@ -256,28 +255,14 @@ async function irwansalon() {
       if(result) {
         resolve(result.branch);
       }
-      
+
     });
   });
 
   result3h1 = result3h1.toString();
   var bintaro  = result3h[0]+' '+result3h1.substring(0,36);
- 
-  branch.push(bintaro);
-  // return console.log(branch);
-  // var result312 = await new Promise((resolve, reject) => {
-  //   htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-  //     'address': ['.shop-box', function ($div) {
-  //       return this.map('figcaption > h3', ($item) =>{
-  //         return $item.text().trim();
-  //       })
-  //     }]
-  //   }, (err, result) => {
-  //     resolve(result.address)
-  //   });
-  // });
 
-  // result3a = result3a.toString();
+  branch.push(bintaro);
 
   var image = await new Promise((resolve, reject) => {
     htmlToJson.request('http://irwanteam.com/main', {
@@ -296,11 +281,6 @@ async function irwansalon() {
   image = image.toString();
   let name = 'Irwan Salon'; //must be unique
 
-  // let branch = result3.toString().replace(/\s+/g," ");
-  // branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
-  // branch = branch.replace( /check googlemaps/g, '' );
-  // let arr_branch = branch.split(',');
-  // let arr_branch_query = result3a.split(',');
   let readyBranch = [];
   let i = 0;
 
@@ -337,33 +317,43 @@ async function irwansalon() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-    if(!err) {
-      console.log('created succeed Irwan Salon');
+  var finish = await new Promise((resolve, reject) => {
+    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+      if(!err) {
+        console.log('created succeed Irwan Salon');
 
-      if(salon.upserted && salon.upserted.length > 0) {
+        if(salon.upserted && salon.upserted.length > 0) {
 
-        let salonId = salon.upserted[0]._id;
+          let salonId = salon.upserted[0]._id;
 
-        Promise.each(branch, looping, salonId).then(function() {
-          //create location
-          locationModel.create(readyBranch, (err, location) => {
-            if(!err) {
-              console.log('created location succeed');
-            }
+          Promise.each(branch, looping, salonId).then(function() {
+            //create location
+            locationModel.create(readyBranch, (err, location) => {
+              if(!err) {
+                console.log('created location Irwan salon succeed');
+                return resolve();
+              }
 
-            if(err){
-              console.log('error create', err);
-            }
+              if(err){
+                console.log('error create', err);
+                reject();
+              }
+            });
           });
-        });
+        }
+        else{
+          resolve('no update data');
+        }
       }
-    }
 
-    if(err){
-      console.log('error create', err);
-    }
+      if(err){
+        console.log('error create', err);
+      }
+    });
   });
+
+  return finish
+
 }
 
 module.exports = irwansalon

@@ -99,7 +99,6 @@ async function cbc() {
   Promise.each = async function(arr, fn, salon_id) {
      for(const item of arr) {
        const locData = await fn(item, i, salon_id);
-
        //collect address to db
        readyBranch.push(locData);
        i++;
@@ -107,17 +106,13 @@ async function cbc() {
   }
 
   function looping(item, i, salon_id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(function() {
-        //get lat and lang from maps by address
-        geoLoc(name, item, branch[i], salon_id).then(function(loc) {
-            loc.location = JSON.stringify(locArr[i]);
-            resolve(loc)
-          }).catch(function(err){
-            reject(err);
-          });
-      }, 1000);
-    });
+    console.log('found location', item);
+    return  {
+      salon:salon_id,
+      address: item,
+      created: new Date(),
+      location: JSON.stringify(locArr[i])
+    }
   }
 
   let payload = {
@@ -131,32 +126,43 @@ async function cbc() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-    if(!err) {
-      console.log('created succeed cbc');
+  var finish = new Promise((resolve, reject) =>{
+    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+      if(!err) {
+        console.log('created succeed cbc');
 
-      if(salon.upserted && salon.upserted.length > 0) {
-        let salonId = salon.upserted[0]._id;
+        if(salon.upserted && salon.upserted.length > 0) {
+          let salonId = salon.upserted[0]._id;
 
-        Promise.each(branch, looping, salonId).then(function() {
-          //create location
-          locationModel.create(readyBranch, (err, location) => {
-            if(!err) {
-              console.log('created location succeed');
-            }
+          Promise.each(branch, looping, salonId).then(function() {
+            //create location
+            console.log('ini lokasi', readyBranch);
+            locationModel.create(readyBranch, (err, location) => {
+              if(!err) {
+                console.log('created location Cbc succeed');
+                return resolve()
+              }
 
-            if(err){
-              console.log('error create', err);
-            }
+              if(err){
+                console.log('error create', err);
+                reject()
+              }
+            });
           });
-        });
+        }
+        else{
+          resolve('no update data');
+        }
       }
-    }
 
-    if(err){
-      console.log('error create', err);
-    }
+      if(err){
+        console.log('error create', err);
+      }
+    });
   });
+
+  return finish
+
 }
 
 module.exports = cbc

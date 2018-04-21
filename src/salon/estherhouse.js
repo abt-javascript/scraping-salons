@@ -7,14 +7,15 @@ const salonModel = require('./model');
 const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
 const imgBuffer =  require('../../services/image_to_buffer.js');
+const axios = require('axios');
 
-async function royalgarden() {
+async function estherhouse() {
   var result = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://www.alitattoosulam.com/', {
-      'service': ['#menu-item-1026', function ($div) {
-        return this.map('ul', ($item) =>{
-          $item = $item.text().trim().replace(/(\t)/gm,"");
-          return $item.replace(/(\n)/gm,",");
+    htmlToJson.request('http://estherhouseofbeauty.co.id', {
+      'service': ['.focus-box', function ($div) {
+        return $div.text().replace(/(\r\n|\n|\t|\r)/gm,"");
+        return this.map('div', ($item) =>{
+          return $item.text();
         })
       }]
     }, (err, result) => {
@@ -27,23 +28,32 @@ async function royalgarden() {
   });
 
   var service = result.toString();
+  var branch = []
+  var url = 'http://estherhouseofbeauty.co.id/?hcs=locatoraid&hca=search%3Asearch%2F_SEARCH_%2Fproduct%2F_PRODUCT_%2Flat%2F_LAT_%2Flng%2F_LNG_%2Flimit%2F200'
 
   var result2 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://www.alitattoosulam.com/contact-us/', {
-      'contact': ['.address-cabang', function ($div) {
-        return $div.text().trim().replace(/(\r\n|\n|\r)/gm,"");
-      }]
-    }, (err, result) => {
-      resolve(result.contact)
+    axios.get(url).then((response) => {
+      if(response.data) {
+        return resolve(response.data);
+      }
+
+      reject(response);
     });
+
   });
-  var contact = result2[0];
-  var phone = contact.substring(59,72);
-  var branch = result2;
+
+  var branch = [];
+  result2.results.map((item) => {
+    if(item.id === '15' || item.id === '3') {
+      branch.push(item);
+    }
+  })
+  var contact = `${branch[0].name} ${branch[0].street1} ${branch[0].phone}`;
+  var phone = branch[0].phone;
 
   var image = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://www.alitattoosulam.com/', {
-      'logo': ['.header_wrapper', function ($img) {
+    htmlToJson.request('http://estherhouseofbeauty.co.id', {
+      'logo': ['.responsive-logo', function ($img) {
         return this.map('a > img', ($item) => {
           return $item.attr('src');
         })
@@ -53,8 +63,9 @@ async function royalgarden() {
     });
   });
 
-  image = image[0][0].toString();
-  let name = 'Royal Garden'; //must be unique
+  image = image.toString();
+
+  let name = 'Esther House'; //must be unique;
 
   let readyBranch = [];
   let i = 0;
@@ -70,16 +81,13 @@ async function royalgarden() {
   }
 
   function looping(item, i, salon_id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(function() {
-        //get lat and lang from maps by address
-        geoLoc(name, item.substring(0,25), branch[i], salon_id).then(function(loc) {
-            resolve(loc)
-          }).catch(function(err){
-            reject(err);
-          });
-      }, 1000);
-    });
+    console.log('Location Found', item.street1);
+    return  {
+      salon:salon_id,
+      address: `${item.street1} ${item.city} ${item.state}`,
+      created: new Date(),
+      location: JSON.stringify({lat:item.latitude, lng:item.longitude})
+    };
   }
 
   let payload = {
@@ -89,14 +97,14 @@ async function royalgarden() {
     name: name,
     phone: phone,
     branch:[],
-    baseUrl:'http://www.alitattoosulam.com/',
+    baseUrl:'http://estherhouseofbeauty.co.id',
     created: new Date()
   }
 
   var finish = await new Promise((resolve, reject) => {
     salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
       if(!err) {
-        console.log('created succeed Royal Garden');
+        console.log('created succeed esther house');
 
         if(salon.upserted && salon.upserted.length > 0) {
           let salonId = salon.upserted[0]._id;
@@ -105,8 +113,8 @@ async function royalgarden() {
             //create location
             locationModel.create(readyBranch, (err, location) => {
               if(!err) {
-                console.log('created location Royal Garden succeed');
-                return resolve();
+                console.log('created location Esther house succeed');
+                return resolve()
               }
 
               if(err){
@@ -128,6 +136,7 @@ async function royalgarden() {
   });
 
   return finish;
+
 }
 
-module.exports = royalgarden
+module.exports = estherhouse

@@ -39,7 +39,7 @@ async function dianmustika() {
   });
 
   var contact = result2[3];
- 
+
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://www.dianmustika.com/gerai/', {
       'branch': ['table', function ($div) {
@@ -55,14 +55,14 @@ async function dianmustika() {
 
   result3[0].map((item, index) => {
     if(index > 0){
-      item = item.replace(index+'.', ''); 
+      item = item.replace(index+'.', '');
       item = item.replace('KLIK', '');
       branch.push(item)
     }
   });
 
   let name = 'Dian Mustika'; //must be unique
-  
+
   let readyBranch = [];
   let i = 0;
 
@@ -89,7 +89,6 @@ async function dianmustika() {
     });
   }
 
-
   let payload = {
     service: service,
     contact: contact.toString(),
@@ -100,32 +99,41 @@ async function dianmustika() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-    if(!err) {
-      console.log('created succeed Dian Mustika');
+  var finish = await new Promise((resolve, reject) => {
+    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+      if(!err) {
+        console.log('created succeed Dian Mustika');
 
-      if(salon.upserted && salon.upserted.length > 0) {
-        let salonId = salon.upserted[0]._id;
+        if(salon.upserted && salon.upserted.length > 0) {
+          let salonId = salon.upserted[0]._id;
 
-        Promise.each(branch, looping, salonId).then(function() {
-          //create location
-          locationModel.create(readyBranch, (err, location) => {
-            if(!err) {
-              console.log('created location succeed');
-            }
+          Promise.each(branch, looping, salonId).then(function() {
+            //create location
+            locationModel.create(readyBranch, (err, location) => {
+              if(!err) {
+                console.log('created location Dian Mustika succeed');
+                return resolve()
+              }
 
-            if(err){
-              console.log('error create', err);
-            }
+              if(err){
+                console.log('error create', err);
+                reject()
+              }
+            });
           });
-        });
+        }
+        else{
+          resolve('no update data');
+        }
       }
-    }
 
-    if(err){
-      console.log('error create', err);
-    }
+      if(err){
+        console.log('error create', err);
+      }
+    });
   });
+
+  return finish
 }
 
 module.exports = dianmustika

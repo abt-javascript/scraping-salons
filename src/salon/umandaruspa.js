@@ -26,7 +26,7 @@ async function umandaruspa() {
   service.push(`${result[4]} (${result[5]})`);
   service.push(`${result[6]} (${result[7]})`);
   service.push(`${result[8]} (${result[9]})`);
-  
+
   var result2 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://umandaruspa.com/', {
       'contact': ['#u13914-8', function ($img) {
@@ -71,7 +71,7 @@ async function umandaruspa() {
       resolve(result.logo);
     });
   });
- 
+
   let name = 'Umandaru Spa'; //must be unique
   let readyBranch = [];
   let i = 0;
@@ -79,7 +79,6 @@ async function umandaruspa() {
   Promise.each = async function(arr, fn, salon_id) {
      for(const item of arr) {
        const locData = await fn(item, i, salon_id);
-       locData.location = JSON.stringify(latLng);
        //collect address to db
        readyBranch.push(locData);
        i++;
@@ -87,16 +86,13 @@ async function umandaruspa() {
   }
 
   function looping(item, i, salon_id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(function() {
-        //get lat and lang from maps by address
-        geoLoc(name, item, branch[i], salon_id).then(function(loc) {
-            resolve(loc)
-          }).catch(function(err){
-            reject(err);
-          });
-      }, 1000);
-    });
+    console.log('found location', item);
+    return  {
+      salon:salon_id,
+      address: item,
+      created: new Date(),
+      location: JSON.stringify(latLng)
+    }
   }
 
   let payload = {
@@ -110,32 +106,42 @@ async function umandaruspa() {
     created: new Date()
   }
 
-  salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
-    if(!err) {
-      console.log('created succeed umandaru spa');
+  var finish = await new Promise(function(resolve, reject) {
+    salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
+      if(!err) {
+        console.log('created succeed umandaru spa');
 
-      if(salon.upserted && salon.upserted.length > 0) {
-        let salonId = salon.upserted[0]._id;
+        if(salon.upserted && salon.upserted.length > 0) {
+          let salonId = salon.upserted[0]._id;
 
-        Promise.each(branch, looping, salonId).then(function() {
-          //create location
-          locationModel.create(readyBranch, (err, location) => {
-            if(!err) {
-              console.log('created location succeed');
-            }
+          Promise.each(branch, looping, salonId).then(function() {
+            //create location
+            locationModel.create(readyBranch, (err, location) => {
+              if(!err) {
+                console.log('created location Umandaru spa succeed');
+                return resolve();
+              }
 
-            if(err){
-              console.log('error create', err);
-            }
+              if(err){
+                console.log('error create', err);
+                reject();
+              }
+            });
           });
-        });
+        }
+        else{
+          resolve('no update data');
+        }
       }
-    }
 
-    if(err){
-      console.log('error create', err);
-    }
+      if(err){
+        console.log('error create', err);
+      }
+    });
   });
+
+  return finish;
+
 }
 
 module.exports = umandaruspa
