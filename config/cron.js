@@ -20,8 +20,7 @@ const natashaskin = require('../src/salon/natashaskin.js');
 const estherhouse = require('../src/salon/estherhouse.js');
 
 function Job () {
-  cron.schedule('*/60 * * * *', function() {
-    return umandaruspa();
+  cron.schedule('0 0 * * *', function() {
     maymay().then(() => {
       magdalena().then(() =>{
         saloncantik().then(() =>{
