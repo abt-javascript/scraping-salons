@@ -65,7 +65,7 @@ let salon = {
 					var location = JSON.parse(item.location);
 					var url =`origins=${lat},${long}&destinations=${location.lat},${location.lng}`
 
-					axios.get(`http://maps.googleapis.com/maps/api/distancematrix/json?${url}`).then((response) => {
+					axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI&${url}`).then((response) => {
 						if(response.data.error_message){
 							return reject2(response.data.error_message);
 						}
@@ -96,10 +96,11 @@ let salon = {
 		})
 		var data2 = _.sortBy(data2, 'value' );
 		var data3 = _.values(_.groupBy(data2, 'salon_id'));
+		var data4 = [];
 
 		data3.map((item) => {
 			if(item[0].salon && item[0].salon_id){
-				console.log(item[0].salon_id, item[0].salon.name);
+				data4.push({salon:item[0].salon, text:item[0].text, value:item[0].value, salon_id:item[0].salon_id});
 			}
 			else {
 				console.log('ini yg undef',item[0]);
@@ -107,7 +108,27 @@ let salon = {
 
 		});
 
-		return data3;
+		Promise.each = async function (arr, item) {
+			for(const item of arr) {
+				const catSal = await fn(item);
+				arr.push(catSal)
+			}
+		}
+
+		function fn(item) {
+
+		}
+
+
+		category.find().exec((err, category) => {
+			if(category.length > 0) {
+				Promise.each(category, fn).then(() =>{
+					resolve(catArr);
+				});
+			}
+		});
+
+		return data4;
 	}
 
 };

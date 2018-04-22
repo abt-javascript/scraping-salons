@@ -1,93 +1,142 @@
 'use strict';
 const salonCategoryModel = require('./model');
+const salonModel = require('../salon/model.js');
 const locationModel = require('../location/model');
 const category = require('../category/model');
 const promise = require('bluebird');
 const generateToken = require('../../services/token.js');
 const signin = require('../../services/sign-in.js');
 const generateHash = require('../../services/hash.js');
+const axios = require('axios');
+const _ = require('lodash');
+const listSalon = require('./controller.list');
 
 let salon = {
 	list: async function(request, h) {
-		let catArr = [];
-		Promise.each = async function(arr, fn) {
-			for(const item of arr) {
-			  const catSal = await fn(item);
+		console.log('start', new Date());
+		var query = request.query;
+		var lat = query.lat;
+		var long = query.long;
 
-			  //collect address to db
-			  catArr.push(catSal);
-			}
-		}
-
-		function fn(item) {
-			var arr = [];
-			Promise.each2 = async function(arr, fn2) {
-				for(const item of arr) {
-					const catSal = await fn2(item);
-					arr.push(catSal)
-				}
-			}
-
-			function fn2(item) {
-				return new Promise((resolve, reject) => {
-					Promise.each3 = async function(arr, fn2) {
-						for(const item of arr) {
-							const catSal = await fn2(item);
-							arr.push(catSal)
-						}
-					}
-
-					function fn3(item) {
-						return new Promise((resolve, reject) => {
-							setTimeout(() => {
-								resolve(item)
-							},10)
-						})
-					}
-
-					locationModel.find({salon:item.salon._id}).exec((err, loc)=> {
-						if(!err) {
-							Promise.each3(loc, fn3).then(() => {
-								item.salon.branch=loc;
-								resolve(item)
-							});
-						}
-
-						return reject(err);
-					});
+		if(!lat ||  !long) {
+			var withOutLatLong =  await new Promise((resolve, reject) => {
+				listSalon(request, h).then((data) => {
+				 return resolve(data)
 				});
-
-			}
-
-	   return new Promise((resolve, reject) => {
-			salonCategoryModel.find({category:item._id}).populate('salon').exec((err, result) => {
-				if(!err) {
-					if(result.length > 0) {
-						Promise.each2(result, fn2).then(() => {
-							resolve({category:item.name, data:result})
-						});
-					}
-				}
 			});
-	   });
+
+			return withOutLatLong;
 		}
 
-		const data = await new promise((resolve, reject) => {
-			category.find().exec((err, category) => {
-				if(category.length > 0) {
-					Promise.each(category, fn).then(() =>{
-						resolve(catArr);
-					});
+		var data = await new Promise((resolve, reject) => {
+			salonModel.find().populate('branch').exec((err, salons)=>{
+				if(!err) {
+					return resolve(salons)
 				}
+
+			reject(err);
+			});
+		})
+
+		return data;
+	},
+	list2: async function(request, h) {
+		console.log('start', new Date());
+		var query = request.query;
+		var lat = query.lat;
+		var long = query.long;
+
+		if(!lat ||  !long) {
+			var abc =  await new Promise((resolve, reject) => {
+				listSalon(request, h).then((data) => {
+				 return resolve(data)
+				});
+			});
+
+			return abc;
+		}
+
+		const data = await new Promise((resolve, reject) => {
+			locationModel.find().populate('salon').exec((err, result) => {
+				if(err) {
+					return reject(err);
+				}
+
+				resolve(result);
+
 			});
 		});
 
-		// var abc = data[0].data;
-		// abc.map((item) => {
-		// 	console.log('id salon', item.salon._id, 'salon category id', item.id, 'category_id', item.category);
-		// });
+		var arr  = [];
+	 	Promise.each = async function(array, fn) {
+			for(const item of array) {
+				var data = await fn(item);
+				if(data) {
+					arr.push(data);
+				}
+			}
+		}
 
-		return data;
+		function looping(item) {
+			return new Promise((resolve2, reject2) => {
+				if(item.location) {
+					var location = JSON.parse(item.location);
+					var url =`origins=${lat},${long}&destinations=${location.lat},${location.lng}`
+
+					axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI&${url}`).then((response) => {
+						if(response.data.error_message){
+							return reject2(response.data.error_message);
+						}
+
+						if(response.data.rows[0].elements[0].distance) {
+							var distance = response.data.rows[0].elements[0].distance;
+							salonCategoryModel.find({salon:item.salon._id}).populate('category').exec((err, salcat) =>{
+								if(salcat.length > 0) {
+									var final = {text:distance.text, salcat:salcat, value:distance.value, address:item.address, salon:item.salon, salon_id:(item.salon) ? item.salon._id : item.salon};
+									return resolve2(final)
+								}
+
+								resolve2({text:distance.text, value:distance.value, address:item.address, salon:item.salon, salon_id:(item.salon) ? item.salon._id : item.salon})
+							});
+
+						}
+						else{
+							resolve2(false)
+						}
+					})
+					.catch(function (error) {
+						reject2(error);
+					});
+
+				}
+				else {
+					resolve2(false)
+				}
+			});
+		}
+
+		var data2 = await new Promise((resolve3, reject3) =>{
+			Promise.each(data, looping).then(() => {
+				resolve3(arr);
+			})
+		});
+		var data2 = _.sortBy(data2, 'value' );
+
+		var data3 = _.values(_.groupBy(data2, 'salon_id'));
+
+		var data4 = [];
+
+		data3.map((item) => {
+			if(item[0].salon && item[0].salon_id){
+				data4.push(item[0]);
+			}
+			else {
+				console.log('ini yg undef',item[0]);
+			}
+
+		});
+		console.log('end', new Date());
+		return data4;
 	}
 };
 

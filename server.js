@@ -6,7 +6,6 @@ const routes = require('./config/routes.js')();
 const cron = require('./config/cron.js');
 const Bcrypt = require('bcrypt');
 const views = require('./views.js');
-const seed = require('./config/seeder');
 
 //need run after build up
 const after_web_up = function(server) {
