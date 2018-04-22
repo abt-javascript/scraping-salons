@@ -141,8 +141,12 @@ async function anitasalon() {
           geoLoc(name, 'Jl Rempoa Raya No. 17 Jakarta Selatan', 'Jl Rempoa Raya #17 Jakarta Selatan', salonId).then(function(loc) {
               locationModel.create(loc, (err, location) => {
                 if(!err) {
-                  console.log('created location Anita Salon succeed');
-                  return resolve()
+                  salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
+                    if(!err){
+                      console.log('created location Irwan salon succeed');
+                      return resolve();
+                    }
+                  });
                 }
 
                 if(err){

@@ -25,11 +25,12 @@ let salon = {
 				});
 			});
 
+			console.log(new Date());
 			return withOutLatLong;
 		}
 
 		var data = await new Promise((resolve, reject) => {
-			salonModel.find().populate('branch').exec((err, salons)=>{
+			salonModel.find().populate({path:'Location', populate:{path:'Location'}}).exec((err, salons)=>{
 				if(!err) {
 					return resolve(salons)
 				}

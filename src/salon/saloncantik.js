@@ -130,8 +130,12 @@ async function saloncantik() {
             //create location
             locationModel.create(readyBranch, (err, location) => {
               if(!err) {
-                console.log('created location Salon Cantik succeed');
-                return resolve();
+                salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
+                  if(!err){
+                    console.log('created location Irwan salon succeed');
+                    return resolve();
+                  }
+                });
               }
 
               if(err){

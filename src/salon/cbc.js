@@ -136,11 +136,14 @@ async function cbc() {
 
           Promise.each(branch, looping, salonId).then(function() {
             //create location
-            console.log('ini lokasi', readyBranch);
             locationModel.create(readyBranch, (err, location) => {
               if(!err) {
-                console.log('created location Cbc succeed');
-                return resolve()
+                salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
+                  if(!err){
+                    console.log('created location Irwan salon succeed');
+                    return resolve();
+                  }
+                });
               }
 
               if(err){

@@ -21,7 +21,7 @@ async function irwansalon() {
         return resolve(result.service)
       }
 
-      return reject('service maymay null')
+      return reject('service irwan salon null')
     });
   });
 
@@ -312,7 +312,7 @@ async function irwansalon() {
     contact: contact,
     images: image,
     name: name,
-    branch:[],
+    location:[],
     baseUrl:'http://irwanteam.com/',
     created: new Date()
   }
@@ -330,8 +330,12 @@ async function irwansalon() {
             //create location
             locationModel.create(readyBranch, (err, location) => {
               if(!err) {
-                console.log('created location Irwan salon succeed');
-                return resolve();
+                salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
+                  if(!err){
+                    console.log('created location Irwan salon succeed');
+                    return resolve();
+                  }
+                });
               }
 
               if(err){

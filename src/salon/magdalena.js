@@ -106,8 +106,12 @@ async function magdalena() {
               //create location
               locationModel.create(loc, (err, location) => {
                 if(!err) {
-                  console.log('created location  magdalena succeed');
-                  return resolve();
+                  salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
+                    if(!err){
+                      console.log('created location Irwan salon succeed');
+                      return resolve();
+                    }
+                  });
                 }
 
                 if(err){

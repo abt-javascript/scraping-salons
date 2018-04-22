@@ -11,7 +11,7 @@ let schema = new Schema({
   },
   images: 'string',
   service: 'string',
-  branch: [{ type: Schema.Types.ObjectId, ref: 'Location' }],
+  location: [{ type: Schema.Types.ObjectId, ref: 'Location' }],
   contact: 'string',
   baseUrl: 'string',
   created: 'date',
