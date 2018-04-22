@@ -30,7 +30,7 @@ let salon = {
 		}
 
 		var data = await new Promise((resolve, reject) => {
-			salonModel.find().populate({path:'Location', populate:{path:'Location'}}).exec((err, salons)=>{
+			salonModel.find().populate('location').exec((err, salons)=>{
 				if(!err) {
 					return resolve(salons)
 				}
@@ -38,7 +38,7 @@ let salon = {
 			reject(err);
 			});
 		})
-
+		console.log('end', new Date());
 		return data;
 	},
 	list2: async function(request, h) {

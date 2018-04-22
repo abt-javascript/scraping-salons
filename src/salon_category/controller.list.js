@@ -13,7 +13,7 @@ var list = async function (request, h) {
     }
   }
 
-  function fn(item) {console.log('masuk');
+  function fn(item) {
     var arr = [];
 
    return new Promise((resolve, reject) => {
@@ -34,7 +34,8 @@ var list = async function (request, h) {
         Promise.each(category, fn).then(() =>{
           resolve(catArr);
         });
-      }else {
+      }
+      else {
         resolve(category)
       }
     });
