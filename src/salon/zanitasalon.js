@@ -8,12 +8,12 @@ const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
 const imgBuffer =  require('../../services/image_to_buffer.js');
 
-async function maymay() {
+async function zanitasalon() {
   var result = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id', {
-      'service': ['.list-unstyled', function ($div) {
-        return this.map('li', ($item) =>{
-          return $item.find('a').text();
+    htmlToJson.request('http://www.zanitasalon.com/salon-perawatan-di-tangerang/', {
+      'service': ['.et_pb_tab_content', function ($div) {
+        return this.map('ul > li', ($item) =>{
+          return $item.text();
         })
       }]
     }, (err, result) => {
@@ -25,7 +25,7 @@ async function maymay() {
     });
   });
 
-  result = result.toString().trim();
+  var service = result.toString().replace(/\s\s+/g, " ").trim();
 
   var result2 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/contact', {
@@ -39,6 +39,8 @@ async function maymay() {
     });
   });
 
+  console.log(result2)
+  return
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/our-shop', {
       'branch': ['.shop-box', function ($div) {
@@ -179,4 +181,4 @@ async function maymay() {
   return finish
 }
 
-module.exports = maymay
+module.exports = zanitasalon

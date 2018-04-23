@@ -18,50 +18,52 @@ const tokyobelle = require('../src/salon/tokyobelle.js');
 const umandaruspa = require('../src/salon/umandaruspa.js');
 const natashaskin = require('../src/salon/natashaskin.js');
 const estherhouse = require('../src/salon/estherhouse.js');
+const zanitasalon = require('../src/salon/zanitasalon.js');
 
 function Job () {
   cron.schedule('0 0 * * *', function() {
-    maymay().then(() => {
-      magdalena().then(() =>{
-        saloncantik().then(() =>{
-          anitasalon().then(() =>{
-            fourlen().then(() => {
-              moz5().then(() =>{
-                irwansalon().then(() =>{
-                  didosalon().then(() => {
-                    dianmustika().then(() =>{
-                      joanne().then(() =>{
-                        poetrespa().then(() => {
-                          naomi().then(() => {
-                            cbc().then(() => {
-                              royalgarden().then(() => {
-                                tokyobelle().then(() => {
-                                  umandaruspa().then(() => {
-                                    natashaskin().then(() => {
-                                      estherhouse().then(() => {
-                                        console.log("scraping done");
-                                        //seeder file
-                                        seed().then(() => {
-                                          console.log('all seeder done');
-                                        });
-                                      });
-                                    });
-                                  });
-                                });
-                              });
-                            });
-                          });
-                        });
-                      });
-                    });
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
+    // maymay().then(() => {
+    //   magdalena().then(() =>{
+    //     saloncantik().then(() =>{
+    //       anitasalon().then(() =>{
+    //         fourlen().then(() => {
+    //           moz5().then(() =>{
+    //             irwansalon().then(() =>{
+    //               didosalon().then(() => {
+    //                 dianmustika().then(() =>{
+    //                   joanne().then(() =>{
+    //                     poetrespa().then(() => {
+    //                       naomi().then(() => {
+    //                         cbc().then(() => {
+    //                           royalgarden().then(() => {
+    //                             tokyobelle().then(() => {
+    //                               umandaruspa().then(() => {
+    //                                 natashaskin().then(() => {
+    //                                   estherhouse().then(() => {
+    //                                     console.log("scraping done");
+    //                                     //seeder file
+    //                                     seed().then(() => {
+    //                                       console.log('all seeder done');
+    //                                     });
+    //                                   });
+    //                                 });
+    //                               });
+    //                             });
+    //                           });
+    //                         });
+    //                       });
+    //                     });
+    //                   });
+    //                 });
+    //               });
+    //             });
+    //           });
+    //         });
+    //       });
+    //     });
+    //   });
+    // });
+    zanitasalon();
   });
 
   return cron;
