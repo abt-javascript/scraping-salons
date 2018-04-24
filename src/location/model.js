@@ -10,6 +10,12 @@ let schema = new Schema({
   location: {
     type:'string'
   },
+  lat: {
+    type:'string'
+  },
+  long: {
+    type:'string'
+  },
   created: 'date',
   updated: 'date'
 }, {

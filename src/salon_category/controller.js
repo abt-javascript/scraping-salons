@@ -10,6 +10,7 @@ const generateHash = require('../../services/hash.js');
 const axios = require('axios');
 const _ = require('lodash');
 const listSalon = require('./controller.list');
+const sortByDistance = require('sort-by-distance')
 
 let salon = {
 	list: async function(request, h) {
@@ -28,11 +29,28 @@ let salon = {
 			console.log(new Date());
 			return withOutLatLong;
 		}
+		var dataReady = [];
 
+		Promise.each = async function(arr, fn) {
+			for(const item of arr) {
+			  const locData = await fn(item);
+	   
+			  //collect address to db
+			  dataReady.push(locData);
+			}
+		 }
+	   
+		function fn(item) {
+			return new Promise((resolve, reject) => {
+			
+			});
+		}
 		var data = await new Promise((resolve, reject) => {
 			salonModel.find().populate('location').exec((err, salons)=>{
 				if(!err) {
-					return resolve(salons)
+					Promise.each(salons, fn).then(() => {
+						return resolve(dataReady)
+					});
 				}
 
 			reject(err);

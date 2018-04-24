@@ -16,7 +16,9 @@ const geoLoc = await new Promise((resolve, reject) => {
               salon:salonId,
               address: address,
               created: new Date(),
-              location: JSON.stringify(maps.location)
+              location: JSON.stringify(maps.location),
+              lat: maps.location.lat,
+              long: maps.location.lng
             }
 
             return resolve(payload);

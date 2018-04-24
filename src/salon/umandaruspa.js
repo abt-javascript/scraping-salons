@@ -91,7 +91,9 @@ async function umandaruspa() {
       salon:salon_id,
       address: item,
       created: new Date(),
-      location: JSON.stringify(latLng)
+      location: JSON.stringify(latLng),
+      lat:latlng.lat,
+      long:latlng.lng
     }
   }
 
