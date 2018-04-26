@@ -111,9 +111,9 @@ async function cbc() {
       salon:salon_id,
       address: item,
       created: new Date(),
-      location: JSON.stringify(locArr[i]),
-      lat:locArr[i],
-      long: locArr[i].lng
+      location: [parseInt(locArr[i].lat), parseInt(locArr[i].lng)],
+      lat: parseInt(locArr[i].lat),
+      long: parseInt(locArr[i].lng)
     }
   }
 

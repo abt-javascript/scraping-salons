@@ -11,14 +11,17 @@ const geoLoc = await new Promise((resolve, reject) => {
         if (!err) {
           if (response.json.results.length > 0) {console.log('ini query loc berhasil', query);
             let maps = response.json.results[0].geometry;
-
+            console.log('ini retrun cordinate', maps.location)
             let payload = {
               salon:salonId,
               address: address,
               created: new Date(),
-              location: JSON.stringify(maps.location),
-              lat: maps.location.lat,
-              long: maps.location.lng
+              location: {
+                type: 'Point',
+                coordinates: [parseFloat(maps.location.lat), parseFloat(maps.location.lng)]
+              },
+              lat: parseInt(maps.location.lat),
+              long: parseInt(maps.location.lng)
             }
 
             return resolve(payload);

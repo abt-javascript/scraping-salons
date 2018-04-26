@@ -92,8 +92,8 @@ async function umandaruspa() {
       address: item,
       created: new Date(),
       location: JSON.stringify(latLng),
-      lat:latlng.lat,
-      long:latlng.lng
+      lat: parseInt(latLng.lat),
+      long: parseInt(latLng.lng)
     }
   }
 

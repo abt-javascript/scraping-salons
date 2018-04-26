@@ -42,18 +42,50 @@ let salon = {
 	   
 		function fn(item) {
 			return new Promise((resolve, reject) => {
-			
+				var options = { near: [lat, long], maxDistance: 1000 };
+				
+				const opts = {
+					yName: 'lat',
+					xName: 'long'
+				}
+				
+				const origin = { longitude: lat, latitude: long}
+
+				item.location = sortByDistance(origin, item.location, opts);
+				
+				
+				locationModel.find({
+					location: { 
+						$nearSphere: [parseFloat(lat), parseFloat(long)], 
+						$maxDistance: 0.1
+					},
+					salon : item._id 
+				}).exec((err, res) => {
+
+					if(err){
+						console.log(err)
+						reject(err);
+					}
+					if(!err){
+						item.location = res;
+						resolve(item);
+					}
+					
+				});
 			});
 		}
+
 		var data = await new Promise((resolve, reject) => {
-			salonModel.find().populate('location').exec((err, salons)=>{
-				if(!err) {
-					Promise.each(salons, fn).then(() => {
-						return resolve(dataReady)
-					});
+			salonModel.find().populate('location').exec((err, salons)=> {
+				if(err){
+					reject(err);
 				}
 
-			reject(err);
+				if(!err) {
+					Promise.each(salons, fn).then(() => {
+						return resolve(dataReady[0])
+					});
+				}
 			});
 		})
 		console.log('end', new Date());

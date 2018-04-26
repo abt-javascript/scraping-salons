@@ -87,8 +87,8 @@ async function estherhouse() {
       address: `${item.street1} ${item.city} ${item.state}`,
       created: new Date(),
       location: JSON.stringify({lat:item.latitude, lng:item.longitude}),
-      lat: item.latitude,
-      long: item.longitude
+      lat: parseInt(item.latitude),
+      long: parseInt(item.longitude)
     };
   }
 

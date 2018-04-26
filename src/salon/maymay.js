@@ -148,6 +148,7 @@ async function maymay() {
 
           Promise.each(arr_branch_query, looping, salonId).then(function() {
             //create location
+            console.log(readyBranch)
             locationModel.create(readyBranch, (err, location) => {
               if(!err) {
                 salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
