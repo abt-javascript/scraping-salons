@@ -191,9 +191,10 @@ async function natashaskin() {
       salon:salon_id,
       address: item[2],
       created: new Date(),
-      location: JSON.stringify({lat:item[0], lng:item[1]}),
-      lat: parseInt(item[0]),
-      long: parseInt(item[1])
+      location: {
+        type: 'Point',
+        coordinates:[parseFloat(item[1]), parseFloat(item[0])],
+      }
     }
   }
 

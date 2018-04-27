@@ -40,7 +40,7 @@ async function fourlen() {
   });
 
   var cabang =  result[6];
-  var tlp = '(021) '+cabang[0].substring(66, 76);
+  var tlp = (cabang.length > 0) ? '(021) '+cabang[0].substring(66, 76) : '';
   let name = 'Fourlen'; //must be unique
 
   let readyBranch = [];

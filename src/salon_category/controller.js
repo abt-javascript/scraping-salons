@@ -2,7 +2,7 @@
 const salonCategoryModel = require('./model');
 const salonModel = require('../salon/model.js');
 const locationModel = require('../location/model');
-const category = require('../category/model');
+const categoryModel = require('../category/model');
 const promise = require('bluebird');
 const generateToken = require('../../services/token.js');
 const signin = require('../../services/sign-in.js');
@@ -14,21 +14,21 @@ const sortByDistance = require('sort-by-distance')
 
 let salon = {
 	list: async function(request, h) {
-		console.log('start', new Date());
+		console.log('start',new Date())
 		var query = request.query;
 		var lat = query.lat;
 		var long = query.long;
 
-		if(!lat ||  !long) {
-			var withOutLatLong =  await new Promise((resolve, reject) => {
-				listSalon(request, h).then((data) => {
-				 return resolve(data)
-				});
+		var withOutLatLong =  await new Promise((resolve, reject) => {
+			listSalon(request, h).then((data) => {
+			 return resolve(data)
 			});
+		});
 
-			console.log(new Date());
+		if(!lat ||  !long) {
 			return withOutLatLong;
 		}
+
 		var dataReady = [];
 
 		Promise.each = async function(arr, fn) {
@@ -41,54 +41,101 @@ let salon = {
 		 }
 	   
 		function fn(item) {
-			return new Promise((resolve, reject) => {
-				var options = { near: [lat, long], maxDistance: 1000 };
-				
-				const opts = {
-					yName: 'lat',
-					xName: 'long'
-				}
-				
-				const origin = { longitude: lat, latitude: long}
-
-				item.location = sortByDistance(origin, item.location, opts);
-				
-				
-				locationModel.find({
+			return new Promise((resolve, reject) => {				
+				locationModel.findOne({
 					location: { 
-						$nearSphere: [parseFloat(lat), parseFloat(long)], 
-						$maxDistance: 0.1
+						$nearSphere: [parseFloat(long), parseFloat(lat)], 
+						$maxDistance: 0.01
 					},
-					salon : item._id 
+					salon:item._id
 				}).exec((err, res) => {
-
 					if(err){
 						console.log(err)
 						reject(err);
 					}
-					if(!err){
-						item.location = res;
-						resolve(item);
+
+					if(res){
+						var url =`origins=${lat},${long}&destinations=${res.location.coordinates[1]},${res.location.coordinates[0]}`
+
+						axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?key=AIzaSyAjWOHPrXscmVtlGBYIsi6ZrvF8ZYydteI&${url}`).then((response) => {
+							if(response.data.error_message){
+								return reject2(response.data.error_message);
+							}
+
+							if(response.data.rows[0].elements[0].distance) {
+								var distance = response.data.rows[0].elements[0].distance;
+								var obj = {
+									images:item.images,
+									baseUrl:item.baseUrl,
+									location:res.location,
+									address:res.address,
+									name:item.name,
+									distanceText:distance.text,
+									distanceValue:distance.value,
+									service:item.service,
+									contact:item.contact
+								}
+
+								resolve(obj);
+
+							}
+							else{
+								resolve(false)
+							}
+						})
+						.catch(function (error) {
+							reject(error);
+						});
 					}
-					
+					else {
+						resolve('Location Data');
+					}
 				});
 			});
 		}
 
 		var data = await new Promise((resolve, reject) => {
-			salonModel.find().populate('location').exec((err, salons)=> {
+			salonModel.find().exec((err, salons)=> {
 				if(err){
 					reject(err);
 				}
 
 				if(!err) {
 					Promise.each(salons, fn).then(() => {
-						return resolve(dataReady[0])
+						console.log('end',new Date())
+						return resolve(dataReady)
 					});
 				}
 			});
 		})
-		console.log('end', new Date());
+		
+		data = _.sortBy(data, 'distanceValue' );
+
+		var data2 = await Promise((resolve, reject) => {
+			Promise.each2 = async function(arr, fn2) {
+				for(const item of arr) {
+				  const locData = await fn2(item);
+		   
+				  //collect address to db
+				  //dataReady.push(locData);
+				}
+			 }
+		   
+			function fn2(item){
+
+			}
+
+			categoryModel.find().exec((err, categori) => {
+				if(err){
+					reject(err)
+				}
+				
+				if(category.length > 0){
+					Promise.each2(categori, fn2)
+				}
+			});
+		});
+
 		return data;
 	},
 	list2: async function(request, h) {

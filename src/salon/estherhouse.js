@@ -86,9 +86,10 @@ async function estherhouse() {
       salon:salon_id,
       address: `${item.street1} ${item.city} ${item.state}`,
       created: new Date(),
-      location: JSON.stringify({lat:item.latitude, lng:item.longitude}),
-      lat: parseInt(item.latitude),
-      long: parseInt(item.longitude)
+      location: {
+        type: 'Point',
+        coordinates:[parseFloat(item.longitude),pasreFloat(item.latitude)]
+      }
     };
   }
 

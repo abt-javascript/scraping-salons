@@ -111,7 +111,10 @@ async function cbc() {
       salon:salon_id,
       address: item,
       created: new Date(),
-      location: [parseInt(locArr[i].lat), parseInt(locArr[i].lng)],
+      location: {
+        type: 'Point',
+        coordinates: [parseFloat(locArr[i].lng), parseFloat(locArr[i].lat)]
+      },
       lat: parseInt(locArr[i].lat),
       long: parseInt(locArr[i].lng)
     }

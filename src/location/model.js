@@ -13,11 +13,8 @@ let schema = new Schema({
     type: { type: String },
     coordinates: [ ] 
   },
-  lat: {
-    type:'number'
-  },
-  long: {
-    type:'number'
+  loc_string: {
+    type:'string'
   },
   created: 'date',
   updated: 'date'

@@ -6,7 +6,7 @@ const googleMapsClient = require('@google/maps').createClient({
 module.exports =  async function (salon, query, address, salonId) {
 const geoLoc = await new Promise((resolve, reject) => {
     googleMapsClient.geocode({
-        address: query
+      address: query
     }, function(err, response) {
         if (!err) {
           if (response.json.results.length > 0) {console.log('ini query loc berhasil', query);
@@ -18,13 +18,17 @@ const geoLoc = await new Promise((resolve, reject) => {
               created: new Date(),
               location: {
                 type: 'Point',
-                coordinates: [parseFloat(maps.location.lat), parseFloat(maps.location.lng)]
+                coordinates: [parseFloat(maps.location.lng), parseFloat(maps.location.lat)]
               },
-              lat: parseInt(maps.location.lat),
-              long: parseInt(maps.location.lng)
+              loc_string: JSON.stringify(maps.location)
+            }
+
+            if(!maps.location.lng || !maps.location.lat) {
+              payload = {}
             }
 
             return resolve(payload);
+            
           }
 
           console.log('ini yg return zero', query);
