@@ -11,4 +11,11 @@ module.exports = [{
 			allow: 'multipart/form-data'
 		}
 	}
+}, {
+	method: 'get',
+	path: '/image/{file}',
+	handler: controller.list,
+	config: {
+		auth:false
+	}
 }];

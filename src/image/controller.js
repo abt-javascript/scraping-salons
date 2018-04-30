@@ -17,6 +17,10 @@ let salon = {
 		});
 
 		return data;
+	},
+	list: async function(request, h) {
+		var data  = await h.file(`${request.params.file}`);
+		return data;
 	}
 
 };

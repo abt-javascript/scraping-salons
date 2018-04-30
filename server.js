@@ -32,21 +32,12 @@ const after_web_up = function(server) {
 const init = async () => {
   await authJwt(server);
 
-//   server.route({
-//     method: 'GET',
-//     path: '/{p*}',
-//     handler: {
-//       directory: {
-//         path: Path.join(__dirname, 'public')
-//       }
-//     }
-//   });
-
+  await server.register(require('inert'));
+  
   await routes.map((item) => {
     server.route(item);
   });
 
-  await server.register(require('inert'));
   await server.register(require('vision'));
   await server.start();
 
