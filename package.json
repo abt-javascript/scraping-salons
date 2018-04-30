@@ -24,6 +24,7 @@
     "hapi-auth-basic": "^5.0.0",
     "hapi-auth-jwt2": "^8.0.0",
     "html-to-json": "^0.6.0",
+    "inert": "^5.1.0",
     "joi": "^13.1.2",
     "lodash": "^4.17.5",
     "moment": "^2.21.0",

@@ -13,6 +13,7 @@ let schema = new Schema({
   service: 'string',
   location: [{ type: Schema.Types.ObjectId, ref: 'Location' }],
   contact: 'string',
+  phone: 'string',
   baseUrl: 'string',
   created: 'date',
   updated: 'date'

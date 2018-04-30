@@ -4,7 +4,7 @@ const views = function(server) {
             ejs: require('ejs')
         },
         relativeTo: __dirname,
-        path: './views'
+        path: './public/views'
     });
 }
 

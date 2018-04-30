@@ -1,6 +1,14 @@
 require('./dotenv.js');
 const Hapi = require('hapi');
-const server = new Hapi.Server({port:process.env.PORT || 1200});
+const Path = require("path");
+const server = new Hapi.Server({
+    port:process.env.PORT || 1200, 
+    routes: {
+        files: {
+            relativeTo: Path.join(__dirname, 'public/image')
+        }
+    }
+});
 const authJwt = require('./config/auth-jwt.js');
 const routes = require('./config/routes.js')();
 const cron = require('./config/cron.js');
@@ -24,11 +32,21 @@ const after_web_up = function(server) {
 const init = async () => {
   await authJwt(server);
 
+//   server.route({
+//     method: 'GET',
+//     path: '/{p*}',
+//     handler: {
+//       directory: {
+//         path: Path.join(__dirname, 'public')
+//       }
+//     }
+//   });
+
   await routes.map((item) => {
     server.route(item);
   });
 
-
+  await server.register(require('inert'));
   await server.register(require('vision'));
   await server.start();
 

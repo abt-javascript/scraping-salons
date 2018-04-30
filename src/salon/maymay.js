@@ -90,7 +90,7 @@ async function maymay() {
   });
 
   phone = phone.toString();
-  phone = phone.substring(0,14)
+  phone = phone.substring(0,14).replace( /[\u2012\u2013\u2014\u2015]/g, '' );
 
   let name = 'May May'; //must be unique
 
