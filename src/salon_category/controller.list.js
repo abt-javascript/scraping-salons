@@ -17,7 +17,7 @@ var list = async function (request, h) {
     var arr = [];
 
    return new Promise((resolve, reject) => {
-    salonCategoryModel.find({category:item._id}).populate('salon').exec((err, result) => {
+    salonCategoryModel.find({category:item._id}).populate({path:'salon',populate:{path:'upload'}}).exec((err, result) => {
       if(!err) {
         resolve({category:item.name, data:result});
       }

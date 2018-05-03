@@ -11,6 +11,7 @@ let schema = new Schema({
   },
   images: 'string',
   service: 'string',
+  upload: [{ type: Schema.Types.ObjectId, ref: 'Image' }],
   location: [{ type: Schema.Types.ObjectId, ref: 'Location' }],
   contact: 'string',
   phone: 'string',

@@ -14,8 +14,5 @@ module.exports = [{
 }, {
 	method: 'get',
 	path: '/image/{file}',
-	handler: controller.list,
-	config: {
-		auth:false
-	}
+	handler: controller.list
 }];
