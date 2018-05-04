@@ -4,35 +4,32 @@ const salonCategoryModel = require('../src/salon_category/model');
 const salonModel = require('../src/salon/model');
 const seederModel = require('../config/seeder_model');
 
-function maymayUser() {
-  seederModel.findOne({name:'Fourlen'}, (err, category) => {
-    if (!category) {
-      categoryModel.find().exec((err, result) => {
-        salonModel.findOne({name:'Fourlen'}).exec((err, salon) => {
-            let arr = [];
-
-            if(salon) {
-              result.map((item) =>{
-                  arr.push({salon:salon._id, category:item._id});
-              });
-
-              Promise.all(result).then(() => {
-                  salonCategoryModel.create(arr, (err, salca) => {
-                    if(salca){
-                      seederModel.create({name:'Fourlen'}, (err, seed) => {
-                          if (seed) {
-                          console.log('seeder Fourlen berhasil');
-                          }
-                      });
-                    }
-                  });
-              })
+function fourlen() {
+  seederModel.findOne({name:'Fourlen'}, (err, seed) => {
+    if (!seed) {
+      salonModel.findOne({name:'Fourlen'}).exec((err, salon) => {
+        if(salon){
+          categoryModel.update({},{$push:{salons:salon}},
+            {
+              multi: true
+            },(err, ok) =>{
+            if(err){
+              console.log('Fourlen')
+              return console.log(err);
+              
             }
-        });
-      });
+
+            seederModel.create({name:'Fourlen'}, (err, seed) => {
+              if (seed) {
+                console.log('seeder Fourlen berhasil');
+              }
+            });
+          })
+        }
+      })
     }
   })
 
 }
 
-module.exports = maymayUser()
+module.exports = fourlen()

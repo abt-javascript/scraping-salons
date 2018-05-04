@@ -5,36 +5,32 @@ const salonModel = require('../src/salon/model');
 const seederModel = require('../config/seeder_model');
 
 function didoSalon() {
-  seederModel.findOne({name:'Dido Salon'}, (err, category) => {
-    if (!category) {
-      categoryModel.find().exec((err, result) => {
-        salonModel.findOne({name:'Dido Salon'}).exec((err, salon) => {
-            let arr = [];
-
-            if(salon) {
-              result.map((item) =>{
-                if(item.name !== 'Bridal'){
-                  arr.push({salon:salon._id, category:item._id});
-                }
-              });
-
-              Promise.all(result).then(() => {
-                  salonCategoryModel.create(arr, (err, salca) => {
-                    if(salca){
-                      seederModel.create({name:'Dido Salon'}, (err, seed) => {
-                          if (seed) {
-                          console.log('seeder Dido Salon berhasil');
-                          }
-                      });
-                    }
-                  });
-              })
+  seederModel.findOne({name:'Dido Salon'}, (err, seed) => {
+    if (!seed) {
+      salonModel.findOne({name:'Dido Salon'}).exec((err, salon) => {
+        if(salon){
+          categoryModel.update({},{$push:{salons:salon}},
+            {
+              multi: true
+            },(err, ok) =>{
+            if(err){
+              console.log('Dido Salon')
+              return console.log(err);
+              
             }
-        });
-      });
+
+            seederModel.create({name:'Dido Salon'}, (err, seed) => {
+              if (seed) {
+                console.log('seeder Dido Salon berhasil');
+              }
+            });
+          })
+        }
+      })
     }
   })
 
 }
 
 module.exports = didoSalon()
+

@@ -4,37 +4,32 @@ const salonCategoryModel = require('../src/salon_category/model');
 const salonModel = require('../src/salon/model');
 const seederModel = require('../config/seeder_model');
 
-function natashaskin() {
-  seederModel.findOne({name:'Natasha Skin'}, (err, category) => {
-    if (!category) {
-      categoryModel.find().exec((err, result) => {
-        salonModel.findOne({name:'Natasha Skin'}).exec((err, salon) => {
-            let arr = [];
-
-            if(salon) {
-              result.map((item) =>{
-                if(item.name === 'Hair'){
-                  arr.push({salon:salon._id, category:item._id});
-                }
-              });
-
-              Promise.all(result).then(() => {
-                  salonCategoryModel.create(arr, (err, salca) => {
-                    if(salca){
-                      seederModel.create({name:'Natasha Skin'}, (err, seed) => {
-                          if (seed) {
-                          console.log('seeder Natasha Skin berhasil');
-                          }
-                      });
-                    }
-                  });
-              })
+function natashaSkin() {
+  seederModel.findOne({name:'Natasha Skin'}, (err, seed) => {
+    if (!seed) {
+      salonModel.findOne({name:'Natasha Skin'}).exec((err, salon) => {
+        if(salon){
+          categoryModel.update({},{$push:{salons:salon}},
+            {
+              multi: true
+            },(err, ok) =>{
+            if(err){
+              console.log('Natasha Skin')
+              return console.log(err);
+              
             }
-        });
-      });
+
+            seederModel.create({name:'Natasha Skin'}, (err, seed) => {
+              if (seed) {
+                console.log('seeder Natasha Skin berhasil');
+              }
+            });
+          })
+        }
+      })
     }
   })
 
 }
 
-module.exports = natashaskin()
+module.exports = natashaSkin()

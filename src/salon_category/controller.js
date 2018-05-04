@@ -28,7 +28,7 @@ let salon = {
 		if(!lat ||  !long) {
 			return withOutLatLong;
 		}
-
+		
 		var dataReady = [];
 
 		Promise.each = async function(arr, fn) {
@@ -94,45 +94,53 @@ let salon = {
 			});
 		}
 
-		var data = await new Promise((resolve, reject) => {
+		var data_salon = await new Promise((resolve, reject) => {
 			salonModel.find().exec((err, salons)=> {
 				if(err){
-					reject(err);
+					return reject(err);
 				}
 
-				if(!err) {
-					Promise.each(salons, fn).then(() => {
-						console.log('end',new Date())
-						return resolve(dataReady)
-					});
-				}
+				Promise.each(salons, fn).then(() => {
+					console.log('end',new Date())
+					return resolve(dataReady)
+				});
 			});
 		})
 		
-		data = _.sortBy(data, 'distanceValue' );
+		data_salon = _.sortBy(data_salon, 'distanceValue' );
 
-		var data2 = await Promise((resolve, reject) => {
+		var data = await new Promise((resolve, reject) => {
+			var arr_data = [];
+
 			Promise.each2 = async function(arr, fn2) {
-				for(const item of arr) {
-				  const locData = await fn2(item);
-		   
-				  //collect address to db
-				  //dataReady.push(locData);
+				for(var item of arr) {
+					const dataItem = await fn2(item);
+
+					arr_data.push(dataItem);
 				}
-			 }
-		   
-			function fn2(item){
-
 			}
-
-			categoryModel.find().exec((err, categori) => {
-				if(err){
-					reject(err)
+			var i = 0;
+			function fn2(item) {
+				var obj = {
+					_id:item._id,
+					name:item.name,
+					salons:data_salon
 				}
 				
-				if(category.length > 0){
-					Promise.each2(categori, fn2)
+				return obj;
+			}
+
+			categoryModel.find().populate('salons').exec((err, categori) => {
+				if(err){
+					return reject(err)
 				}
+				if(categori.length === 0){
+					return resolve('EMPTY DATA')
+				}
+				
+				Promise.each2(categori, fn2).then(() => {
+					resolve(arr_data);
+				});
 			});
 		});
 

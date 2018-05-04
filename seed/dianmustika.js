@@ -5,36 +5,32 @@ const salonModel = require('../src/salon/model');
 const seederModel = require('../config/seeder_model');
 
 function dianMustika() {
-  seederModel.findOne({name:'Dian Mustika'}, (err, category) => {
-    if (!category) {
-      categoryModel.find().exec((err, result) => {
-        salonModel.findOne({name:'Dian Mustika'}).exec((err, salon) => {
-            let arr = [];
-
-            if(salon) {
-              result.map((item) =>{
-                if(item.name !== 'Bridal'){
-                  arr.push({salon:salon._id, category:item._id});
-                }
-              });
-
-              Promise.all(result).then(() => {
-                  salonCategoryModel.create(arr, (err, salca) => {
-                    if(salca){
-                      seederModel.create({name:'Dian Mustika'}, (err, seed) => {
-                          if (seed) {
-                          console.log('seeder Dian Mustika berhasil');
-                          }
-                      });
-                    }
-                  });
-              })
+  seederModel.findOne({name:'Dian Mustika'}, (err, seed) => {
+    if (!seed) {
+      salonModel.findOne({name:'Dian Mustika'}).exec((err, salon) => {
+        if(salon){
+          categoryModel.update({},{$push:{salons:salon}},
+            {
+              multi: true
+            },(err, ok) =>{
+            if(err){
+              console.log('Dian Mustika')
+              return console.log(err);
+              
             }
-        });
-      });
+
+            seederModel.create({name:'Dian Mustika'}, (err, seed) => {
+              if (seed) {
+                console.log('seeder Dian Mustika berhasil');
+              }
+            });
+          })
+        }
+      })
     }
   })
 
 }
 
 module.exports = dianMustika()
+
