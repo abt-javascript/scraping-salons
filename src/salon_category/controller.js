@@ -10,11 +10,9 @@ const generateHash = require('../../services/hash.js');
 const axios = require('axios');
 const _ = require('lodash');
 const listSalon = require('./controller.list');
-const sortByDistance = require('sort-by-distance')
 
 let salon = {
 	list: async function(request, h) {
-		console.log('start',new Date())
 		var query = request.query;
 		var lat = query.lat;
 		var long = query.long;
@@ -28,7 +26,15 @@ let salon = {
 		if(!lat ||  !long) {
 			return withOutLatLong;
 		}
+
+		if (parseInt(lat) < -90 || parseInt(lat) > 90) {
+			return "Latitude must be between -90 and 90 degrees inclusive.";
+		}
 		
+		if (parseInt(long) < -180 || parseInt(long) > 180) {
+			return "Longitude must be between -180 and 180 degrees inclusive.";
+		}
+
 		var dataReady = [];
 
 		Promise.each = async function(arr, fn) {
