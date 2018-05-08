@@ -6,7 +6,7 @@ var list = async function (request, h) {
   let catArr = [];
 
   const data  = await new Promise((resolve, reject) => {
-    categoryModel.find().populate('salons').exec((err, category) => {
+    categoryModel.find().populate({path:'salons', populate:{path:'review', populate:{path:'user', select:{password:0}}}}).exec((err, category) => {
       if(err){
         return reject(err)
       }
