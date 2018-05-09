@@ -13,6 +13,7 @@ const listSalon = require('./controller.list');
 
 let salon = {
 	list: async function(request, h) {
+		console.log('start',new Date())
 		var query = request.query;
 		var lat = query.lat;
 		var long = query.long;
@@ -70,6 +71,7 @@ let salon = {
 							if(response.data.rows[0].elements[0].distance) {
 								var distance = response.data.rows[0].elements[0].distance;
 								var obj = {
+									_id:item._id,
 									images:item.images,
 									baseUrl:item.baseUrl,
 									location:res.location,
