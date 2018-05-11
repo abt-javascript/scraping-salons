@@ -81,7 +81,7 @@ let salon = {
 									distanceText:distance.text,
 									distanceValue:distance.value,
 									service:item.service,
-									contact:item.contact
+									phone:item.phone
 								}
 
 								resolve(obj);
