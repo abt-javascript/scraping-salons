@@ -80,7 +80,10 @@ async function umandaruspa() {
      for(const item of arr) {
        const locData = await fn(item, i, salon_id);
        //collect address to db
-       readyBranch.push(locData);
+       if(locData.location){
+         readyBranch.push(locData);
+       }
+
        i++;
      }
   }
@@ -91,9 +94,10 @@ async function umandaruspa() {
       salon:salon_id,
       address: item,
       created: new Date(),
-      location: JSON.stringify(latLng),
-      lat: parseInt(latLng.lat),
-      long: parseInt(latLng.lng)
+      location: {
+        type: 'Point',
+        coordinates:[parseFloat(latLng.lng), parseFloat(latLng.lat)],
+      }
     }
   }
 
@@ -122,7 +126,7 @@ async function umandaruspa() {
               if(!err) {
                 salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
                   if(!err){
-                    console.log('created location Irwan salon succeed');
+                    console.log('created location Umandaru salon succeed');
                     return resolve();
                   }
                 });

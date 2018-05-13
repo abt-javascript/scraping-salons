@@ -21,9 +21,9 @@ const estherhouse = require('../src/salon/estherhouse.js');
 const zanitasalon = require('../src/salon/zanitasalon.js');
 
 function Job () {
-  cron.schedule('*/10 * * * *', function() {
+  cron.schedule('* * * * *', function() {
     seed();
-
+return
     maymay().then(() => {
       magdalena().then(() =>{
         saloncantik().then(() =>{
@@ -43,10 +43,6 @@ function Job () {
                                     natashaskin().then(() => {
                                       estherhouse().then(() => {
                                         console.log("scraping done");
-                                        //seeder file
-                                        seed().then(() => {
-                                          console.log('all seeder done');
-                                        });
                                       });
                                     });
                                   });

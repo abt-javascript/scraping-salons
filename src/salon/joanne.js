@@ -115,7 +115,10 @@ async function joanne() {
        const locData = await fn(item, i, salon_id);
 
        //collect address to db
-       readyBranch.push(locData);
+       if(locData.location){
+         readyBranch.push(locData);
+       }
+       
        i++;
      }
   }

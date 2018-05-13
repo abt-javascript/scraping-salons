@@ -1,4 +1,4 @@
-const generateHash = require('../services/hash.js');
+
 const categoryModel = require('../src/category/model');
 const salonCategoryModel = require('../src/salon_category/model');
 const salonModel = require('../src/salon/model');
@@ -16,7 +16,7 @@ function estherHouse() {
             if(err){
               console.log('Esther House')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Esther House'}, (err, seed) => {
