@@ -39,10 +39,14 @@ let salon = {
 		var dataReady = [];
 
 		Promise.each = async function(arr, fn) {
-			for(const item of arr) {
-			  const locData = await fn(item);
-	   
-			  dataReady.push(locData);
+			for(var item of arr) {
+			  var locData = await fn(item);
+			  var obj = locData._doc;
+
+			  obj.distanceText = locData.distanceText;
+			  obj.distanceValue = locData.distanceValue;
+
+			  dataReady.push(obj);
 			}
 		 }
 	   
@@ -70,21 +74,11 @@ let salon = {
 
 							if(response.data.rows[0].elements[0].distance) {
 								var distance = response.data.rows[0].elements[0].distance;
-								var obj = {
-									_id:item._id,
-									images:item.images,
-									baseUrl:item.baseUrl,
-									location:res.location,
-									address:res.address,
-									name:item.name,
-									review:item.review,
-									distanceText:distance.text,
-									distanceValue:distance.value,
-									service:item.service,
-									phone:item.phone
-								}
+								
+								item['distanceText'] = distance.text;
+								item['distanceValue'] = distance.value;
 
-								resolve(obj);
+								resolve({...item});
 
 							}
 							else{
