@@ -180,13 +180,22 @@ async function natashaskin() {
        const locData = await fn(item, i, salon_id);
 
        //collect address to db
-       readyBranch.push(locData);
+
+       if(locData.location){
+          readyBranch.push(locData);
+       }
+
        i++;
      }
   }
 
   function looping(item, i, salon_id) {
     console.log('location found', item[2]);
+
+    if(!parseFloat(item[1]) || !parseFloat(item[0])) {
+      return {}
+    }
+
     return  {
       salon:salon_id,
       address: item[2],
@@ -223,7 +232,7 @@ async function natashaskin() {
               if(!err) {
                 salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
                   if(!err){
-                    console.log('created location Irwan salon succeed');
+                    console.log('created location natasha salon succeed');
                     return resolve();
                   }
                 });

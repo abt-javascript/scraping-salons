@@ -81,7 +81,7 @@ async function magdalena() {
     });
   });
 
-  let name = 'Magadalena'; //must be unique
+  let name = 'Magdalena'; //must be unique
 
   let payload = {
     service: service.toString().trim(),
@@ -108,7 +108,7 @@ async function magdalena() {
                 if(!err) {
                   salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
                     if(!err){
-                      console.log('created location Irwan salon succeed');
+                      console.log('created location nagdalena salon succeed');
                       return resolve();
                     }
                   });

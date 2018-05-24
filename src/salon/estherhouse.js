@@ -75,20 +75,23 @@ async function estherhouse() {
        const locData = await fn(item, i, salon_id);
 
        //collect address to db
-       readyBranch.push(locData);
+       if(locData.location){
+         readyBranch.push(locData);
+       }
+
        i++;
      }
   }
 
   function looping(item, i, salon_id) {
-    console.log('Location Found', item.street1);
+    console.log('Location Found', item.street1, item);
     return  {
       salon:salon_id,
       address: `${item.street1} ${item.city} ${item.state}`,
       created: new Date(),
       location: {
         type: 'Point',
-        coordinates:[parseFloat(item.longitude),pasreFloat(item.latitude)]
+        coordinates:[parseFloat(item.longitude),parseFloat(item.latitude)]
       }
     };
   }
@@ -118,7 +121,7 @@ async function estherhouse() {
               if(!err) {
                 salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
                   if(!err){
-                    console.log('created location Irwan salon succeed');
+                    console.log('created location esther salon succeed');
                     return resolve();
                   }
                 });

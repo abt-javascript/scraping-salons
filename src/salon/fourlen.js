@@ -52,7 +52,10 @@ async function fourlen() {
        const locData = await fn(item, i, salon_id);
 
        //collect address to db
-       readyBranch.push(locData);
+       if(locData.location){
+         readyBranch.push(locData);
+       }
+
        i++;
      }
   }
@@ -95,7 +98,7 @@ async function fourlen() {
                 if(!err) {
                   salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
                     if(!err){
-                      console.log('created location Irwan salon succeed');
+                      console.log('created location fourlen salon succeed');
                       return resolve();
                     }
                   });

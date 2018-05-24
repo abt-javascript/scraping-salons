@@ -107,7 +107,10 @@ async function maymay() {
        const locData = await fn(item, i, salon_id);
 
        //collect address to db
-       readyBranch.push(locData);
+       if(locData.location){
+         readyBranch.push(locData);
+       }
+       
        i++;
      }
   }
@@ -152,7 +155,7 @@ async function maymay() {
               if(!err) {
                 salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
                   if(!err){
-                    console.log('created location Irwan salon succeed');
+                    console.log('created location maymay salon succeed');
                     return resolve();
                   }
                 });
