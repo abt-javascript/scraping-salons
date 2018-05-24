@@ -132,7 +132,7 @@ async function maymay() {
 
   let payload = {
     service: result,
-    contact: result2.toString().trim(),
+    address: result2.toString().trim(),
     images: url,
     name: name,
     phone: phone,

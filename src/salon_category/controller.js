@@ -77,6 +77,7 @@ let salon = {
 								
 								item['distanceText'] = distance.text;
 								item['distanceValue'] = distance.value;
+								item.address = res.address
 
 								resolve({...item});
 

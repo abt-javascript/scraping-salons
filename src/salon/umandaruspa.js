@@ -103,7 +103,7 @@ async function umandaruspa() {
 
   let payload = {
     service: service.toString(),
-    contact: contact,
+    address: contact,
     images: 'http://umandaruspa.com/images/logo%20umandaru.png',
     name: name,
     phone: phone,

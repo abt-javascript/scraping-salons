@@ -103,7 +103,7 @@ async function didosalon() {
 
   let payload = {
     service: service.toString(),
-    contact: contact,
+    address: contact,
     images: image,
     name: name,
     branch:[],

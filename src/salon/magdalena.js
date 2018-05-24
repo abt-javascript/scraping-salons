@@ -85,7 +85,7 @@ async function magdalena() {
 
   let payload = {
     service: service.toString().trim(),
-    contact: result2.toString().trim(),
+    address: result2.toString().trim(),
     images:result4.toString().trim(),
     name: name,
     branch:[],

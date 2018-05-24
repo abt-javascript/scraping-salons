@@ -93,7 +93,7 @@ async function dianmustika() {
 
   let payload = {
     service: service,
-    contact: contact.toString(),
+    address: contact.toString(),
     images: 'empty',
     name: name,
     branch:[],

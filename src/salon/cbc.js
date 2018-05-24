@@ -124,7 +124,7 @@ async function cbc() {
 
   let payload = {
     service: service,
-    contact: contact,
+    address: contact,
     images: images,
     name: name,
     phone: phone,

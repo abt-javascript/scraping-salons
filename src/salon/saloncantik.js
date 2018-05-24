@@ -113,11 +113,11 @@ async function saloncantik() {
 
   let payload = {
     service: result,
-    contact: result2.toString().trim(),
+    address: result2.toString().trim(),
     images: result4.toString().trim(),
     name: name,
     branch:[],//result3c.toString().trim().replace(/(\r\n|\n|\r)/gm,","),
-    baseUrl:'http://salon.maymay.co.id/',
+    baseUrl:'http://www.geraisaloncantik.com',
     created: new Date()
   }
 

@@ -124,7 +124,7 @@ async function anitasalon() {
 
   let payload = {
     service: service.toString(),
-    contact: contact,
+    address: contact,
     images: logo,
     name: name,
     branch:[],
