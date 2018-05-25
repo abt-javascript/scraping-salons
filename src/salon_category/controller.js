@@ -45,6 +45,8 @@ let salon = {
 
 			  obj.distanceText = locData.distanceText;
 			  obj.distanceValue = locData.distanceValue;
+			  obj.lat = locData.lat;
+			  obj.long = locData.long;
 
 			  dataReady.push(obj);
 			}
@@ -77,6 +79,8 @@ let salon = {
 								
 								item['distanceText'] = distance.text;
 								item['distanceValue'] = distance.value;
+								item['lat'] = res.location.coordinates[0];
+								item['long'] = res.location.coordinates[1];
 								item.address = res.address
 
 								resolve({...item});
