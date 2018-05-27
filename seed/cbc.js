@@ -5,21 +5,21 @@ const salonModel = require('../src/salon/model');
 const seederModel = require('../config/seeder_model');
 
 function Cbc() {
-  seederModel.findOne({name:'Cbc'}, (err, seed) => {
+  seederModel.findOne({name:'CBC Beauty Care'}, (err, seed) => {
     if (!seed) {
-      salonModel.findOne({name:'Cbc'}).exec((err, salon) => {
+      salonModel.findOne({name:'CBC Beauty Care'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:'Bridal And Spa'},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Cbc')
               return console.log(err);
-              
+
             }
 
-            seederModel.create({name:'Cbc'}, (err, seed) => {
+            seederModel.create({name:'CBC Beauty Care'}, (err, seed) => {
               if (seed) {
                 console.log('seeder Cbc berhasil');
               }

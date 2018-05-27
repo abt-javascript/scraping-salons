@@ -9,14 +9,14 @@ function maymayUser() {
     if (!seed) {
       salonModel.findOne({name:'May May'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:{$ne: 'Bridal And Spa'}},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('may may')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'May May'}, (err, seed) => {
@@ -35,7 +35,7 @@ function maymayUser() {
         //         if(salon) {
         //             arr.push({salon:salon._id, category:item._id});
         //         }
-                
+
         //     });
 
         //     Promise.all(result).then(() => {

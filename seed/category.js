@@ -5,7 +5,7 @@ const seederModel = require('../config/seeder_model');
 function seederUser() {
   seederModel.findOne({name:'category'}, (err, category) => {
     if (!category) {
-      const payload = [{name:'Hair'},{name:'Eyelashes'},{name:'Brow'},{name:'Bridal'},{name:'Nails'}];
+      const payload = [{name:'Hair'},{name:'Eyelashes'},{name:'Brow'},{name:'Bridal And Spa'},{name:'Nails'}];
 
       categoryModel.create(payload, (err, ok) => {
           if(!err) {

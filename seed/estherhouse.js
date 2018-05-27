@@ -9,7 +9,7 @@ function estherHouse() {
     if (!seed) {
       salonModel.findOne({name:'Esther House'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:['Bridal And Spa', 'Brow']},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{

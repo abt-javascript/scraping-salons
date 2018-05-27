@@ -9,14 +9,14 @@ function fourlen() {
     if (!seed) {
       salonModel.findOne({name:'Fourlen'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:{$ne:'Brow'}},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Fourlen')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Fourlen'}, (err, seed) => {
