@@ -102,7 +102,7 @@ let salon = {
 		}
 
 		var data_salon = await new Promise((resolve, reject) => {
-			salonModel.find().populate({path:'review', populate:{path:'user', select:{password:0}}}).exec((err, salons)=> {
+			salonModel.find().populate('location').populate({path:'review', populate:{path:'user', select:{password:0}}}).exec((err, salons)=> {
 				if(err){
 					return reject(err);
 				}
