@@ -9,14 +9,14 @@ function tokyoBelle() {
     if (!seed) {
       salonModel.findOne({name:'Tokyo Belle'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:'Eyelashes'},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Tokyo Belle')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Tokyo Belle'}, (err, seed) => {

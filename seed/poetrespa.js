@@ -9,14 +9,14 @@ function poetreSpa() {
     if (!seed) {
       salonModel.findOne({name:'Poetre Spa'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name: ['Bridal And Spa', 'Nails']},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Poetre Spa')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Poetre Spa'}, (err, seed) => {

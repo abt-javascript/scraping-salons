@@ -9,14 +9,14 @@ function moz5() {
     if (!seed) {
       salonModel.findOne({name:'Moz5'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:['Hair', 'Bridal And Spa', 'Nails']},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Moz5')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Moz5'}, (err, seed) => {

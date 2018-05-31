@@ -31,7 +31,7 @@ let salon = {
 		if (parseInt(lat) < -90 || parseInt(lat) > 90) {
 			return "Latitude must be between -90 and 90 degrees inclusive.";
 		}
-		
+
 		if (parseInt(long) < -180 || parseInt(long) > 180) {
 			return "Longitude must be between -180 and 180 degrees inclusive.";
 		}
@@ -41,22 +41,25 @@ let salon = {
 		Promise.each = async function(arr, fn) {
 			for(var item of arr) {
 			  var locData = await fn(item);
-			  var obj = locData._doc;
 
-			  obj.distanceText = locData.distanceText;
-			  obj.distanceValue = locData.distanceValue;
-			  obj.lat = locData.lat;
-			  obj.long = locData.long;
+				if(locData._doc){
+					var obj = locData._doc;
 
-			  dataReady.push(obj);
+				  obj.distanceText = (locData) ? locData.distanceText : '';
+				  obj.distanceValue = (locData) ? locData.distanceValue : '';
+				  obj.lat = (locData) ? locData.lat : '';
+				  obj.long = (locData) ? locData.long : '';
+
+				  dataReady.push(obj);
+				}
 			}
 		 }
-	   
+
 		function fn(item) {
-			return new Promise((resolve, reject) => {				
+			return new Promise((resolve, reject) => {
 				locationModel.findOne({
-					location: { 
-						$nearSphere: [parseFloat(long), parseFloat(lat)], 
+					location: {
+						$nearSphere: [parseFloat(long), parseFloat(lat)],
 						$maxDistance: 0.01
 					},
 					salon:item._id
@@ -76,7 +79,7 @@ let salon = {
 
 							if(response.data.rows[0].elements[0].distance) {
 								var distance = response.data.rows[0].elements[0].distance;
-								
+
 								item['distanceText'] = distance.text;
 								item['distanceValue'] = distance.value;
 								item['lat'] = res.location.coordinates[0];
@@ -113,7 +116,7 @@ let salon = {
 				});
 			});
 		})
-		
+
 		data_salon = _.sortBy(data_salon, 'distanceValue' );
 
 		var data = await new Promise((resolve, reject) => {
@@ -133,7 +136,7 @@ let salon = {
 					name:item.name,
 					salons:data_salon
 				}
-				
+
 				return obj;
 			}
 
@@ -144,7 +147,7 @@ let salon = {
 				if(categori.length === 0){
 					return resolve('EMPTY DATA')
 				}
-				
+
 				Promise.each2(categori, fn2).then(() => {
 					resolve(arr_data);
 				});

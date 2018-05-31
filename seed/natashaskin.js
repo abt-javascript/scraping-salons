@@ -9,14 +9,14 @@ function natashaSkin() {
     if (!seed) {
       salonModel.findOne({name:'Natasha Skin'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:'Bridal And Spa'},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Natasha Skin')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Natasha Skin'}, (err, seed) => {

@@ -40,7 +40,7 @@ async function cbc() {
     });
   });
   var contact = result2.toString();
-  var phone = contact.substring(87, 103)
+  var phone = '0'+contact.substring(91, 103)
   var branch = [contact]
 
   var result3 = await new Promise((resolve, reject) => {
@@ -77,7 +77,7 @@ async function cbc() {
     }
   });
 
-  var images = await new Promise((resolve, reject) => {
+  var logo = await new Promise((resolve, reject) => {
     htmlToJson.request('http://www.cbcbeautycare.com/index.html', {
       'logo': ['.mainlogotop', function ($img) {
         return this.map('a > img', ($item) => {
@@ -89,9 +89,9 @@ async function cbc() {
     });
   });
 
-  images = 'http://www.cbcbeautycare.com'+images;
+  var images = 'http://www.cbcbeautycare.com/'+logo;
 
-  let name = 'Cbc'; //must be unique
+  let name = 'CBC Beauty Care'; //must be unique
 
   let readyBranch = [];
   let i = 0;
@@ -132,7 +132,7 @@ async function cbc() {
     baseUrl:'http://www.cbcbeautycare.com',
     created: new Date()
   }
-
+console.log(payload);
   var finish = new Promise((resolve, reject) =>{
     salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
       if(!err) {

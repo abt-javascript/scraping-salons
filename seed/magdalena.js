@@ -8,7 +8,7 @@ function magdalena() {
     if (!seed) {
       salonModel.findOne({name:'Magdalena'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:'Bridal And Spa'},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{

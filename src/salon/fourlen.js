@@ -39,6 +39,7 @@ async function fourlen() {
     });
   });
 
+  var address = result[6][0]
   var cabang =  result[6];
   var tlp = (cabang.length > 0) ? '(021) '+cabang[0].substring(66, 76) : '';
   let name = 'Fourlen'; //must be unique
@@ -76,7 +77,7 @@ async function fourlen() {
   let payload = {
     service: service,
     phone: tlp,
-    address:'',
+    address:address,
     images: '',
     name: name,
     branch:[],

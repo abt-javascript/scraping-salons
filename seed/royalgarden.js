@@ -9,14 +9,14 @@ function royalGarden() {
     if (!seed) {
       salonModel.findOne({name:'Royal Garden'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:'Bridal And Spa'},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Royal Garden')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Royal Garden'}, (err, seed) => {

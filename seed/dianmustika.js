@@ -9,14 +9,14 @@ function dianMustika() {
     if (!seed) {
       salonModel.findOne({name:'Dian Mustika'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name:'Bridal And Spa'},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Dian Mustika')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Dian Mustika'}, (err, seed) => {
@@ -33,4 +33,3 @@ function dianMustika() {
 }
 
 module.exports = dianMustika()
-

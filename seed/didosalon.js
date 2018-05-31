@@ -9,14 +9,14 @@ function didoSalon() {
     if (!seed) {
       salonModel.findOne({name:'Dido Salon'}).exec((err, salon) => {
         if(salon){
-          categoryModel.update({},{$push:{salons:salon}},
+          categoryModel.update({name: 'Hair'},{$push:{salons:salon}},
             {
               multi: true
             },(err, ok) =>{
             if(err){
               console.log('Dido Salon')
               return console.log(err);
-              
+
             }
 
             seederModel.create({name:'Dido Salon'}, (err, seed) => {
@@ -33,4 +33,3 @@ function didoSalon() {
 }
 
 module.exports = didoSalon()
-

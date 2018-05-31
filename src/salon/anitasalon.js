@@ -75,10 +75,11 @@ async function anitasalon() {
   });
 
   result2 = result2.toString().trim().replace(/(\r\n|\n|\r)/gm,"");
+  result2 = result2.replace(/\s\s+/g, ' ');
 
-  var contact = result2.substring(66, 86)+result2.substring(90, 110);
-  var fax = result2.substring(112, 131);
-
+  var address = result2
+  var phone = '02174864475'
+console.log(phone);
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://salon.maymay.co.id/our-shop', {
       'branch': ['.shop-box', function ($div) {
@@ -124,10 +125,11 @@ async function anitasalon() {
 
   let payload = {
     service: service.toString(),
-    address: contact,
+    address: address,
     images: logo,
     name: name,
     branch:[],
+    phone:phone,
     baseUrl:'http://www.anitasalon-rempoa.com/',
     created: new Date()
   }

@@ -83,7 +83,7 @@ async function didosalon() {
        if(locData.location){
          readyBranch.push(locData);
        }
-       
+
        i++;
      }
   }
@@ -106,6 +106,7 @@ async function didosalon() {
     address: contact,
     images: image,
     name: name,
+    phone:'0217198368',
     branch:[],
     baseUrl:'https://www.didosalon.com',
     created: new Date()

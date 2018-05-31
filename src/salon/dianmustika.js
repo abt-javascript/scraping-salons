@@ -39,6 +39,7 @@ async function dianmustika() {
   });
 
   var contact = result2[3];
+  var phone = '08128091810';
 
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://www.dianmustika.com/gerai/', {
@@ -94,8 +95,9 @@ async function dianmustika() {
   let payload = {
     service: service,
     address: contact.toString(),
-    images: 'empty',
+    images: '',
     name: name,
+    phone:phone,
     branch:[],
     baseUrl:'http://salon.maymay.co.id/',
     created: new Date()
