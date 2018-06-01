@@ -53,7 +53,7 @@ let user = {
 	},
 	sign_in: async function(req, h) {
 		let payload = req.payload;
-
+console.log(payload);
 		let user =  await new promise((resolve, reject) => {
 			userModel.findOne({username:payload.username}, (err, ok) => {
 				if(err) {
