@@ -75,6 +75,7 @@ console.log(payload);
 							username: ok.username,
 							mobile: ok.mobile,
 							success:true,
+							message: 'Success'
 						};
 
 						bookmarkModel.find({user:ok._id}).populate('salon').exec((err, bookmark) => {
