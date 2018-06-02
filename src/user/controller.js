@@ -34,7 +34,8 @@ let user = {
 
 				userModel.create(payload, (err, ok) => {
 					if(!err) {
-						ok.success = true
+						ok.success = true;
+						console.log(ok);
 						resolve(ok);
 					}
 
