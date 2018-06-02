@@ -39,7 +39,7 @@ let user = {
 
 
 					if(err && err.code === 11000){
-						resolve('duplicate payload');
+						resolve({error:'duplicate payload'});
 					}
 
 					reject(err);
