@@ -34,9 +34,7 @@ let user = {
 
 				userModel.create(payload, (err, ok) => {
 					if(!err) {
-						ok.success = true;
-						console.log(ok);
-						resolve(ok);
+						resolve({_id:ok._id, username:ok.username, fullname:ok.fullname, success:true});
 					}
 
 
