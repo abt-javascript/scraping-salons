@@ -40,7 +40,7 @@ let user = {
 
 
 					if(err && err.code === 11000){
-						resolve({message:'duplicate payload', success:false});
+						resolve({message:'Username sudah terdaftar', success:false});
 					}
 
 					reject(err);
