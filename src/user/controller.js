@@ -27,7 +27,7 @@ let user = {
 	sign_up: async function(req, h) {
 		let payload = req.payload;
 		payload.created = new Date();
-
+console.log(payload);
 		let createUser =  await new promise((resolve, reject) => {
 			generateHash(payload.password).then(hash => {
 				payload.password = hash;
