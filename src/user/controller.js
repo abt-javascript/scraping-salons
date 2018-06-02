@@ -34,12 +34,13 @@ let user = {
 
 				userModel.create(payload, (err, ok) => {
 					if(!err) {
+						ok.success = true
 						resolve(ok);
 					}
 
 
 					if(err && err.code === 11000){
-						resolve({error:'duplicate payload'});
+						resolve({error:'duplicate payload', success:false});
 					}
 
 					reject(err);
