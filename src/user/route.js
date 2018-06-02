@@ -19,9 +19,9 @@ module.exports = [{
 	handler: controller.sign_up,
 	config: {
 		auth:false,
-		// validate: {
-		// 	payload: validation.create
-		// }
+		validate: {
+			payload: validation.create
+		}
 	}
 }, {
 	method: 'post',
