@@ -34,12 +34,12 @@ let user = {
 
 				userModel.create(payload, (err, ok) => {
 					if(!err) {
-						resolve(ok);
+						resolve({_id:ok._id, username:ok.username, fullname:ok.fullname, success:true});
 					}
 
 
 					if(err && err.code === 11000){
-						resolve('duplicate payload');
+						resolve({message:'Username sudah terdaftar', success:false});
 					}
 
 					reject(err);
@@ -73,7 +73,10 @@ let user = {
 						let obj = {
 							_id: ok._id,
 							username: ok.username,
+							fullname: ok.fullname,
 							mobile: ok.mobile,
+							success:true,
+							message: 'Success'
 						};
 
 						bookmarkModel.find({user:ok._id}).populate('salon').exec((err, bookmark) => {
