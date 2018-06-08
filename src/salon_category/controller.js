@@ -131,10 +131,12 @@ let salon = {
 			}
 			var i = 0;
 			function fn2(item) {
+				var salons = data_salon.filter(function(obj) { return item.salons.indexOf(obj._id) >= 0; });
+
 				var obj = {
 					_id:item._id,
 					name:item.name,
-					salons:data_salon
+					salons: salons
 				}
 
 				return obj;
