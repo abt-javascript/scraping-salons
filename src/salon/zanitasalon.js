@@ -7,6 +7,7 @@ const salonModel = require('./model');
 const geoLoc =  require('../../services/getLatLangMaps.js');
 const locationModel = require('../location/model');
 const imgBuffer =  require('../../services/image_to_buffer.js');
+const chalk = require('chalk');
 
 async function zanitasalon() {
   var result = await new Promise((resolve, reject) => {
@@ -21,56 +22,44 @@ async function zanitasalon() {
         return resolve(result.service)
       }
 
-      return reject('service maymay null')
+      return reject('service zanita null');
     });
   });
 
   var service = result.toString().replace(/\s\s+/g, " ").trim();
 
   var result2 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/contact', {
-      'contact': ['.sidecontact', function ($div) {
-        return this.map('p', ($item) =>{
-          return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
-        })
-      }]
-    }, (err, result) => {
-      resolve(result.contact)
-    });
-  });
-
-  console.log(result2)
-  return
-  var result3 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'branch': ['.shop-box', function ($div) {
-        return this.map('figcaption', ($item) =>{
-          return $item.text().trim().replace(/(\r\n|\n|\r)/gm,"");
-        })
-      }]
-    }, (err, result) => {
-      resolve(result.branch)
-    });
-  });
-
-  var result3a = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/our-shop', {
-      'address': ['.shop-box', function ($div) {
-        return this.map('figcaption > h3', ($item) =>{
-          return $item.text().trim();
-        })
+    htmlToJson.request('http://www.zanitasalon.com', {
+      'address': ['.et_pb_blurb_description', function ($div) {
+        return $div.text().trim().replace(/(\r\n|\n|\r)/gm,"");
       }]
     }, (err, result) => {
       resolve(result.address)
     });
   });
 
-  result3a = result3a.toString();
+  var address = result2[9];
+  console.log('ini alamat ', address);
+return;
+  var result3 = await new Promise((resolve, reject) => {
+    htmlToJson.request('http://www.zanitasalon.com/', {
+      'logo': ['iframe', function ($ifrm) {
+          return $ifrm.attr('src');
+      }]
+    }, function (err, result) {
+      resolve(result.logo);
+    });
+  });
 
+  result3 = result3[0].split('!');
+  var lat = result3[6].substring(2, result3[6].length);
+  var long = result3[5].substring(2, result3[5].length);
+
+return console.log(lat, result3[6], long, result3[5]);
   var result4 = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/', {
-      'logo': ['.logo', function ($img) {
-        return this.map('figure > a > img', ($item) => {
+    htmlToJson.request('http://www.zanitasalon.com/', {
+      'logo': ['.logo_container', function ($img) {
+        return this.map('a > img', ($item) => {
           return $item.attr('src');
         })
       }]
@@ -79,67 +68,22 @@ async function zanitasalon() {
     });
   });
 
-  var phone = await new Promise((resolve, reject) => {
-    htmlToJson.request('http://salon.maymay.co.id/contact', {
-      'logo': ['.sidecontact', function ($img) {
-        return this.map('.phone', ($item) => {
-          return $item.text();
-        })
-      }]
-    }, function (err, result) {
-      resolve(result.logo);
-    });
-  });
-
-  phone = phone.toString();
-  phone = phone.substring(0,14)
-
-  let name = 'May May'; //must be unique
-
-  let branch = result3.toString().replace(/\s+/g," ");
-  branch = branch.replace( /[\u2012\u2013\u2014\u2015]/g, '' );
-  branch = branch.replace( /check googlemaps/g, '' );
-  let arr_branch = branch.split(',');
-  let arr_branch_query = result3a.split(',');
-  let readyBranch = [];
-  let i = 0;
-
-  Promise.each = async function(arr, fn, salon_id) {
-     for(const item of arr) {
-       const locData = await fn(item, i, salon_id);
-
-       //collect address to db
-       readyBranch.push(locData);
-       i++;
-     }
-  }
-
-  function looping(item, i, salon_id) {
-    return new Promise((resolve, reject) => {
-      setTimeout(function() {
-        //get lat and lang from maps by address
-        geoLoc(name, item, arr_branch[i], salon_id).then(function(loc) {
-            resolve(loc)
-          }).catch(function(err){
-            reject(err);
-          });
-      }, 1000);
-    });
-  }
-
-  var url = 'http://salon.maymay.co.id' + result4.toString().trim();
+  var logo = result4[0][0];
+  var phone = result2[6].substring(10,23);
+  let name = 'Zanita Salon'; //must be unique;
 
   let payload = {
-    service: result,
-    address: result2.toString().trim(),
-    images: url,
+    service: service,
+    address: address,
+    images: logo,
     name: name,
     phone: phone,
     branch:[],
-    baseUrl:'http://salon.maymay.co.id/',
+    baseUrl:'http://www.zanitasalon.com/',
     created: new Date()
   }
-
+  console.log(payload);
+return
   var finish = await new Promise((resolve, reject) => {
     salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
       if(!err) {
@@ -148,23 +92,32 @@ async function zanitasalon() {
         if(salon.upserted && salon.upserted.length > 0) {
           let salonId = salon.upserted[0]._id;
 
-          Promise.each(arr_branch_query, looping, salonId).then(function() {
-            //create location
-            locationModel.create(readyBranch, (err, location) => {
-              if(!err) {
-                salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
-                  if(!err){
-                    console.log('created location Irwan salon succeed');
-                    return resolve();
-                  }
-                });
-              }
+          let payload = {
+            salon:salonId,
+            address: address,
+            created: new Date(),
+            location: {
+              type: 'Point',
+              coordinates: [parseFloat(maps.location.lng), parseFloat(maps.location.lat)]
+            },
+            loc_string: JSON.stringify(maps.location)
+          }
 
-              if(err){
-                reject()
-                console.log('error create', err);
-              }
-            });
+          //create location
+          locationModel.create(readyBranch, (err, location) => {
+            if(!err) {
+              salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
+                if (!err) {
+                  console.log('created location Zanita salon succeed');
+                  return resolve();
+                }
+              });
+            }
+
+            if(err){
+              reject()
+              console.log('error create', err);
+            }
           });
         }
         else{
