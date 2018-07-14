@@ -22,8 +22,7 @@ const zanitasalon = require('../src/salon/zanitasalon.js');
 
 function Job () {
   cron.schedule('0 0 * * *', function() {
-    return seed();
-    return zanitasalon();
+    seed();
     maymay().then(() => {
       magdalena().then(() =>{
         saloncantik().then(() =>{
@@ -42,7 +41,9 @@ function Job () {
                                   umandaruspa().then(() => {
                                     natashaskin().then(() => {
                                       estherhouse().then(() => {
-                                        console.log("scraping done");
+                                        zanitasalon().then(() => {
+                                          console.log("scraping done");
+                                        });
                                       });
                                     });
                                   });

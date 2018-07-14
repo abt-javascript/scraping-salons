@@ -39,8 +39,7 @@ async function zanitasalon() {
   });
 
   var address = result2[9];
-  console.log('ini alamat ', address);
-return;
+
   var result3 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://www.zanitasalon.com/', {
       'logo': ['iframe', function ($ifrm) {
@@ -55,7 +54,7 @@ return;
   var lat = result3[6].substring(2, result3[6].length);
   var long = result3[5].substring(2, result3[5].length);
 
-return console.log(lat, result3[6], long, result3[5]);
+
   var result4 = await new Promise((resolve, reject) => {
     htmlToJson.request('http://www.zanitasalon.com/', {
       'logo': ['.logo_container', function ($img) {
@@ -82,29 +81,28 @@ return console.log(lat, result3[6], long, result3[5]);
     baseUrl:'http://www.zanitasalon.com/',
     created: new Date()
   }
-  console.log(payload);
-return
+
   var finish = await new Promise((resolve, reject) => {
     salonModel.update({name: name}, payload, {upsert: true}, (err, salon) => {
       if(!err) {
-        console.log('created succeed maymay');
+        console.log('created succeed Zanita');
 
         if(salon.upserted && salon.upserted.length > 0) {
           let salonId = salon.upserted[0]._id;
 
-          let payload = {
+          let payloadLoc = {
             salon:salonId,
             address: address,
             created: new Date(),
             location: {
               type: 'Point',
-              coordinates: [parseFloat(maps.location.lng), parseFloat(maps.location.lat)]
+              coordinates: [parseFloat(long), parseFloat(lat)]
             },
-            loc_string: JSON.stringify(maps.location)
+            loc_string: JSON.stringify({lat:lat, lng:long})
           }
 
           //create location
-          locationModel.create(readyBranch, (err, location) => {
+          locationModel.create(payloadLoc, (err, location) => {
             if(!err) {
               salonModel.update({_id: salonId}, {location:location}, (err, salon2) => {
                 if (!err) {
