@@ -26,7 +26,7 @@ let salon = {
 
 		if (query.lat && query.long) {
 			const salon =  await new promise(function(resolve, reject) {
-				salonModel.findOne({_id:request.params.id}).populate('review').exec((err, result) => {
+				salonModel.findOne({_id:request.params.id}).populate({path:'review', populate:{path:'user', select:{password:0}}}).exec((err, result) => {
 					if(err) {
 						return reject(err);
 					}
@@ -83,7 +83,7 @@ let salon = {
 		}
 
 		const data = await new promise((resolve, reject) => {
-			salonModel.findOne({_id:request.params.id}).populate('review').exec((err, result) => {
+			salonModel.findOne({_id:request.params.id}).populate({path:'review', populate:{path:'user', select:{password:0}}}).exec((err, result) => {
 				if(!err) {
 					locationModel.find({salon:request.params.id}).exec((err, loc) => {
 						if(loc.length > 0) {

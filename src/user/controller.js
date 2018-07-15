@@ -109,14 +109,15 @@ let user = {
 	byId: async function(request, h) {
 		const data = await new promise((resolve, reject) => {
 			userModel.findOne({_id:request.params.id},{password:0}).exec((err, result) => {
-				if(!err) {
-					resolve(result);
-				}
-
 				if(err) {
-					reject(err);
+					return reject(err);
 				}
 
+				if (!result) {
+					return resolve('User tidak di temukan');
+				}
+
+				return resolve(result);
 			});
 		});
 
