@@ -12,7 +12,20 @@ module.exports = [{
 }, {
 	method: 'get',
 	path: '/user',
-	handler: controller.list
+	handler: controller.list,
+	options: {
+		//handler: handlers.getToDo,
+		description: 'Meb ',
+		notes: 'Returns a todo item by the id passed in the path',
+		tags: ['api'], // ADD THIS TAG
+		// validate: {
+		// 	params: {
+		// 		id : Joi.number()
+		// 		.required()
+		// 		.description('the id for the todo item'),
+		// 	}
+		// }
+	},
 }, {
 	method: 'post',
 	path: '/user/sign_up',
