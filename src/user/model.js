@@ -6,7 +6,7 @@ let Schema = mongoose.Schema;
 
 let schema = new Schema({
   fullname: 'string',
-  username: {
+  email: {
     type:'string',
     unique:true
   },

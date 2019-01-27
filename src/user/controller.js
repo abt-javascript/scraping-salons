@@ -34,7 +34,7 @@ let user = {
 
 				userModel.create(payload, (err, ok) => {
 					if(!err) {
-						resolve({_id:ok._id, username:ok.username, fullname:ok.fullname, success:true});
+						resolve({_id:ok._id, email:ok.email, fullname:ok.fullname, success:true});
 					}
 
 
@@ -55,7 +55,7 @@ let user = {
 		let payload = req.payload;
 
 		let user =  await new promise((resolve, reject) => {
-			userModel.findOne({username:payload.username}, (err, ok) => {
+			userModel.findOne({email:payload.email}, (err, ok) => {
 				if(err) {
 					reject(err);
 				}
@@ -72,7 +72,7 @@ let user = {
 
 						let obj = {
 							_id: ok._id,
-							username: ok.username,
+							email: ok.email,
 							fullname: ok.fullname,
 							mobile: ok.mobile,
 							success:true,

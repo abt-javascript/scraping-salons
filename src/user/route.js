@@ -11,26 +11,21 @@ module.exports = [{
 	}
 }, {
 	method: 'get',
-	path: '/user',
-	handler: controller.list,
+	path: '/users',
 	options: {
-		//handler: handlers.getToDo,
-		description: 'Meb ',
-		notes: 'Returns a todo item by the id passed in the path',
-		tags: ['api'], // ADD THIS TAG
-		// validate: {
-		// 	params: {
-		// 		id : Joi.number()
-		// 		.required()
-		// 		.description('the id for the todo item'),
-		// 	}
-		// }
+		handler: controller.list,
+		description: 'List user ',
+		notes: 'list all user no need',
+		tags: ['api'],
 	},
 }, {
 	method: 'post',
 	path: '/user/sign_up',
-	handler: controller.sign_up,
-	config: {
+	options: {
+		handler: controller.sign_up,
+		description: 'Sign up user ',
+		notes: 'Register for new user',
+		tags: ['api'],
 		auth:false,
 		validate: {
 			payload: validation.create
@@ -40,8 +35,11 @@ module.exports = [{
 	method: 'post',
 	path: '/user/sign_in',
 	handler: controller.sign_in,
-	config:{
+	options:{
 		auth: false,
+		description: 'Sign in user ',
+		notes: 'sign in user is required for get token',
+		tags: ['api'],
 		validate: {
 			payload: validation.signin
 		}

@@ -4,5 +4,10 @@ const controller = require('./controller');
 module.exports = [{
 	method: 'get',
 	path: '/saloncategory',
-	handler: controller.list
+	options: {
+		handler: controller.list,
+		description: 'List Salon Category',
+		notes: 'List Salon Category',
+		tags: ['api'],
+	}
 }];
